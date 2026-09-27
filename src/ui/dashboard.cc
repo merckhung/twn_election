@@ -929,7 +929,7 @@ void Dashboard::DrawHelp(SkCanvas* c, const DashboardModel& m) {
   const float x = (Layout(m.width, m.height).panel_x - w) / 2, y = (m.height - h) / 2;
   Panel(c, SkRect::MakeXYWH(x, y, w, h), 14 * s_);
   const char* keys[] = {"help.title", "help.1", "help.2", "help.3", "help.4",
-                        "help.5",     "help.6", "help.7", "help.8", "help.9"};
+                        "help.5",     "help.6", "help.7", "help.8", "help.9", "help.10"};
   float ty = y + 42 * s_;
   for (size_t i = 0; i < std::size(keys); ++i) {
     const SkFont f = i == 0 ? fonts_->Bold(20 * s_) : fonts_->Regular(15 * s_);

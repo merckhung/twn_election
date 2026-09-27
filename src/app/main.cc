@@ -16,6 +16,7 @@ void Usage() {
       "  --root=DIR          project directory containing data/ and assets/ (default: .)\n"
       "  --results=FILE      results JSON to watch (default: data/election/2026/results.json)\n"
       "  --simulate          run a synthetic, clearly-labelled counting-night DEMO\n"
+      "  --no_music          disable the ambient background music\n"
       "  --sim_speed=X       simulation speed: 1 (real time), 2, 4, ... 4096 (default 64)\n"
       "  --sim_clock=HH:MM   start the simulated count at this time (16:00-23:00)\n"
       "  --sim_progress=P    start at fraction P of the evening (16:00 + P*7h)\n"
@@ -73,6 +74,7 @@ int main(int argc, char** argv) {
     if (Flag(a, "--root", &v)) o.root = v;
     else if (Flag(a, "--results", &v)) o.results_path = v;
     else if (Flag(a, "--simulate", &v)) o.simulate = v != "0" && v != "false";
+    else if (Flag(a, "--no_music", &v)) o.music = v == "0" || v == "false";
     else if (Flag(a, "--sim_speed", &v)) o.sim_speed = std::atof(v.c_str());
     else if (Flag(a, "--sim_clock", &v)) {
       int h = 0, mi = 0;

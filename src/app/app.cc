@@ -38,6 +38,7 @@ int App::Run(const AppOptions& options) {
     std::fprintf(stderr, "twn_election: %s\n", error.c_str());
     return 1;
   }
+  if (opt_.music && !opt_.headless) music_.Start();
   if (opt_.headless && !opt_.record_dir.empty()) {
     // Frame sequence at a fixed rate (simulated time advances with it).
     const int frames = static_cast<int>(opt_.record_seconds * opt_.record_fps);
@@ -233,6 +234,7 @@ bool App::Init(std::string* error) {
 }
 
 void App::Shutdown() {
+  music_.Stop();
   if (news_) news_->Stop();
   news_.reset();
   if (ctx_.device()) {
@@ -721,6 +723,9 @@ void App::OnKey(int key, int action, int) {
     case GLFW_KEY_I:
       pip_ = !pip_;
       break;
+    case GLFW_KEY_V:
+      music_.Toggle();
+      break;
     case GLFW_KEY_LEFT:
     case GLFW_KEY_RIGHT:
       if (chart_ == ui::ChartKind::kTrend) CycleChartRace(key == GLFW_KEY_RIGHT ? 1 : -1);
@@ -755,8 +760,17 @@ void App::OnKey(int key, int action, int) {
     case GLFW_KEY_COMMA:
       if (sim_) sim_->SlowDown();
       break;
+    case GLFW_KEY_PAGE_DOWN:
+      if (sim_) sim_->SlowDown();
+      break;
     case GLFW_KEY_PERIOD:
       if (sim_) sim_->SpeedUp();
+      break;
+    case GLFW_KEY_PAGE_UP:
+      if (sim_) sim_->SpeedUp();
+      break;
+    case GLFW_KEY_F7:
+      RestartSimulation();
       break;
     case GLFW_KEY_LEFT_BRACKET:
       if (sim_) SeekSimulation(sim_->clock_minutes() - 30);
