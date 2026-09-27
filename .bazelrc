@@ -1,0 +1,15 @@
+common --enable_bzlmod
+common --noenable_workspace
+
+build --cxxopt=-std=c++20 --host_cxxopt=-std=c++20
+build --copt=-fdiagnostics-color=always
+build -c opt
+# Skia is built with hidden symbol visibility; link everything statically.
+build --dynamic_mode=off
+build:debug -c dbg
+build:asan -c dbg --copt=-fsanitize=address --linkopt=-fsanitize=address
+
+test --test_output=errors
+
+# Machine-local overrides (mirrors, local module overrides, ...).
+try-import %workspace%/user.bazelrc

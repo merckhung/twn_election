@@ -1,0 +1,220 @@
+{
+  "schema": "twn_election.election/v1",
+  "election": {
+    "id": "2026-local",
+    "date": "2026-11-28",
+    "polls_open": "08:00",
+    "polls_close": "16:00",
+    "timezone": "Asia/Taipei",
+    "name_zh": "115年地方公職人員選舉（九合一選舉）",
+    "name_en": "2026 Taiwanese local elections (nine-in-one)"
+  },
+  "registration": {
+    "period": "2026-08-31/2026-09-04",
+    "review_deadline": "2026-10-16",
+    "ballot_number_draw": "2026-10-23"
+  },
+  "offices": [
+    {
+      "name_zh": "直轄市長",
+      "name_ja": "直轄市長",
+      "name_en": "Municipal mayors",
+      "seats": 6,
+      "candidates": 23,
+      "headline": true
+    },
+    {
+      "name_zh": "直轄市議員",
+      "name_ja": "直轄市議員",
+      "name_en": "Municipal councilors",
+      "seats": 381,
+      "candidates": 610,
+      "headline": false
+    },
+    {
+      "name_zh": "縣(市)長",
+      "name_ja": "県（市）長",
+      "name_en": "County/city mayors",
+      "seats": 16,
+      "candidates": 58,
+      "headline": true
+    },
+    {
+      "name_zh": "縣(市)議員",
+      "name_ja": "県（市）議員",
+      "name_en": "County/city councilors",
+      "seats": 538,
+      "candidates": 892,
+      "headline": false
+    },
+    {
+      "name_zh": "直轄市山地原住民區長",
+      "name_ja": "直轄市山地原住民区長",
+      "name_en": "Indigenous district chiefs",
+      "seats": 6,
+      "candidates": 16,
+      "headline": false
+    },
+    {
+      "name_zh": "直轄市山地原住民區民代表",
+      "name_ja": "直轄市山地原住民区民代表",
+      "name_en": "Indigenous district reps",
+      "seats": 50,
+      "candidates": 94,
+      "headline": false
+    },
+    {
+      "name_zh": "鄉(鎮、市)長",
+      "name_ja": "郷（鎮・市）長",
+      "name_en": "Township chiefs",
+      "seats": 198,
+      "candidates": 465,
+      "headline": false
+    },
+    {
+      "name_zh": "鄉(鎮、市)民代表",
+      "name_ja": "郷（鎮・市）民代表",
+      "name_en": "Township reps",
+      "seats": 2076,
+      "candidates": 3437,
+      "headline": false
+    },
+    {
+      "name_zh": "村(里)長",
+      "name_ja": "村（里）長",
+      "name_en": "Village/borough chiefs",
+      "seats": 7780,
+      "candidates": 14100,
+      "headline": false
+    }
+  ],
+  "totals": {
+    "seats": 11051,
+    "candidates": 19695
+  },
+  "referendums": [
+    {
+      "id": "ref-22",
+      "case_no": 22,
+      "scope": "national",
+      "question_zh": "你是否支持政府使用「核電」振興經濟，以廢除「非核家園」的能源政策？",
+      "question_en": "Do you support the government using nuclear power to revitalize the economy, thereby abolishing the 'nuclear-free homeland' energy policy?",
+      "note": "English and Japanese texts are unofficial translations.",
+      "question_ja": "あなたは、政府が「原子力発電」を利用して経済を振興し、「非核家園（原発ゼロ）」のエネルギー政策を廃止することに賛成しますか？"
+    }
+  ],
+  "sources": [
+    {
+      "title": "CNA: 2026九合一選舉 22縣市長登記參選名單一次看",
+      "url": "https://www.cna.com.tw/news/aipl/202609045002.aspx"
+    },
+    {
+      "title": "CNA: 九合一選舉登記截止 6人參選台北市長",
+      "url": "https://www.cna.com.tw/news/aipl/202609040292.aspx"
+    },
+    {
+      "title": "CNA: 新北市長選舉第3人參戰",
+      "url": "https://www.cna.com.tw/news/aipl/202609040312.aspx"
+    },
+    {
+      "title": "CTS/CNA: 九合一選舉登記截止 桃園市長2人參選",
+      "url": "https://news.cts.com.tw/cna/local/202609/202609043075271.html"
+    },
+    {
+      "title": "CNA: 九合一選舉登記截止 台中市長3人參選",
+      "url": "https://www.cna.com.tw/news/aipl/202609040299.aspx"
+    },
+    {
+      "title": "CTS/CNA: 台南市長4人、議員88人參選",
+      "url": "https://news.cts.com.tw/cna/politics/202609/202609043075266.html"
+    },
+    {
+      "title": "Epoch Times: 下屆高雄市長5人登記參選",
+      "url": "https://www.epochtimes.com/b5/26/9/5/n14842995.htm"
+    },
+    {
+      "title": "Yahoo: 基市選舉登記截止3人選市長",
+      "url": "https://tw.news.yahoo.com/%E5%9F%BA%E5%B8%82%E9%81%B8%E8%88%89%E7%99%BB%E8%A8%98%E6%88%AA%E6%AD%A23%E4%BA%BA%E9%81%B8%E5%B8%82%E9%95%B7-%E5%B1%B1%E5%8E%9F%E6%88%90%E6%9C%80%E5%A4%A7%E6%88%B0%E5%A0%B4-112309429.html"
+    },
+    {
+      "title": "LTN: 新竹市長選舉確定三腳督",
+      "url": "https://news.ltn.com.tw/news/politics/breakingnews/5563478"
+    },
+    {
+      "title": "Chiayi City Govt: 嘉義市各類選舉候選人登記結果及人數",
+      "url": "https://www.chiayi.gov.tw/News_Content.aspx?n=455&s=951539"
+    },
+    {
+      "title": "LTN: 新竹縣長選戰3搶1",
+      "url": "https://news.ltn.com.tw/news/politics/breakingnews/5563627"
+    },
+    {
+      "title": "Yahoo: 苗栗959人登記拚地方",
+      "url": "https://tw.news.yahoo.com/%E8%8B%97%E6%A0%97959%E4%BA%BA%E7%99%BB%E8%A8%98%E6%8B%9A%E5%9C%B0%E6%96%B9-3%E9%84%89%E9%8E%AE%E5%B8%82%E9%95%B7%E5%90%8C%E9%A1%8D%E7%AB%B6%E9%81%B8-%E6%9D%91%E9%87%8C5%E6%90%B61-121628561.html"
+    },
+    {
+      "title": "Yahoo: 彰化地方選舉參選人全底定 彰化縣長4人競逐",
+      "url": "https://tw.news.yahoo.com/%E5%BD%B0%E5%8C%96%E5%9C%B0%E6%96%B9%E9%81%B8%E8%88%89%E5%8F%83%E9%81%B8%E4%BA%BA%E5%85%A8%E5%BA%95%E5%AE%9A-%E5%BD%B0%E5%8C%96%E7%B8%A3%E9%95%B74%E4%BA%BA%E7%AB%B6%E9%80%90-%E5%93%A1%E6%9E%97%E5%B8%82%E4%B8%8A%E6%BC%94%E4%B8%89%E8%85%B3%E7%9D%A3-132551805.html"
+    },
+    {
+      "title": "TaiwanHot: 2026南投縣長選戰確定藍綠對決",
+      "url": "https://www.taiwanhot.net/news/1147203/"
+    },
+    {
+      "title": "LTN: 雲林縣長選舉4人登記",
+      "url": "https://news.ltn.com.tw/news/politics/breakingnews/5563455"
+    },
+    {
+      "title": "CNA: 吳品叡、蔡易餘登記選嘉義縣長",
+      "url": "https://www.cna.com.tw/news/aipl/202609030072.aspx"
+    },
+    {
+      "title": "UDN: 2026選舉屏東縣共1558人登記",
+      "url": "https://udn.com/news/story/124652/9735280"
+    },
+    {
+      "title": "LTN: 宜蘭縣771人登記參選 縣長5搶1",
+      "url": "https://news.ltn.com.tw/news/politics/breakingnews/5563488"
+    },
+    {
+      "title": "UDN: 花蓮縣長選舉 4人同日登記",
+      "url": "https://udn.com/news/story/124652/9733316"
+    },
+    {
+      "title": "CNA: 無黨籍2人參選台東縣長",
+      "url": "https://www.cna.com.tw/news/aloc/202609120079.aspx"
+    },
+    {
+      "title": "LTN: 無黨澎湖縣長參選人葉竹林完成登記 百里侯6搶1",
+      "url": "https://news.ltn.com.tw/news/politics/breakingnews/5563070"
+    },
+    {
+      "title": "LTN: 金門縣長選戰竟7搶1",
+      "url": "https://news.ltn.com.tw/news/politics/breakingnews/5563614"
+    },
+    {
+      "title": "Yahoo: 九合一選舉登記截止 連江縣長2人議員14人參選",
+      "url": "https://tw.news.yahoo.com/%E4%B9%9D%E5%90%88-%E9%81%B8%E8%88%89%E7%99%BB%E8%A8%98%E6%88%AA%E6%AD%A2-%E9%80%A3%E6%B1%9F%E7%B8%A3%E9%95%B72%E4%BA%BA%E8%AD%B0%E5%93%A114%E4%BA%BA%E5%8F%83%E9%81%B8-120439474.html"
+    },
+    {
+      "title": "CEC: 115年地方公職人員選舉候選人完成登記",
+      "url": "https://web.cec.gov.tw/central/article/64711"
+    },
+    {
+      "title": "UDN: 中選會：1萬9695人登記參選",
+      "url": "https://udn.com/news/story/124652/9739027"
+    },
+    {
+      "title": "UDN: 重啟核電公投案 立法院表決成案11/28投票",
+      "url": "https://udn.com/vote2026/story/6656/9691477"
+    },
+    {
+      "title": "CommonWealth: 2026九合一選舉11/28登場｜公投僅核電案成案",
+      "url": "https://www.cw.com.tw/article/5142808"
+    },
+    {
+      "title": "Economic Daily: 中選會：廢除非核家園公投5場辯論 11/12起舉行",
+      "url": "https://money.udn.com/money/story/7307/9763425"
+    }
+  ]
+}

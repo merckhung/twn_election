@@ -1,0 +1,41 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("//bazel:shaders.bzl", "spirv_library")
+
+package(default_visibility = ["//visibility:public"])
+
+spirv_library(
+    name = "scene_shaders",
+    srcs = [
+        "shaders/bars.frag",
+        "shaders/bars.vert",
+        "shaders/ground.frag",
+        "shaders/ground.vert",
+        "shaders/map.frag",
+        "shaders/map.vert",
+        "shaders/overlay.frag",
+        "shaders/overlay.vert",
+    ],
+    hdrs = ["shaders/common.glsl"],
+)
+
+cc_library(
+    name = "render",
+    srcs = [
+        "renderer.cc",
+        "vk_context.cc",
+        "vk_loader.cc",
+    ],
+    hdrs = [
+        "renderer.h",
+        "vk_context.h",
+        "vk_loader.h",
+    ],
+    linkopts = ["-ldl"],
+    deps = [
+        ":scene_shaders",
+        "//src/geo",
+        "@glm",
+        "@system_glfw//:glfw",
+        "@vulkan_headers//:vulkan_headers_no_prototypes",
+    ],
+)

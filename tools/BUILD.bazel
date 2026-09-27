@@ -1,0 +1,10 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary")
+
+cc_binary(
+    name = "results_tool",
+    srcs = ["results_tool.cc"],
+    deps = [
+        "//src/election",
+        "//src/geo",
+    ],
+)

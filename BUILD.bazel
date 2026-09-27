@@ -1,0 +1,18 @@
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["LICENSE"])
+
+filegroup(
+    name = "data",
+    srcs = glob(["data/**"]),
+)
+
+filegroup(
+    name = "assets",
+    srcs = glob(["assets/**"]),
+)
+
+alias(
+    name = "twn_election",
+    actual = "//src/app:twn_election",
+)

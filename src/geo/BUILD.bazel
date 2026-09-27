@@ -1,0 +1,24 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "geo",
+    srcs = [
+        "mesh_builder.cc",
+        "projection.cc",
+        "region_tree.cc",
+        "topojson.cc",
+    ],
+    hdrs = [
+        "mesh_builder.h",
+        "projection.h",
+        "region_tree.h",
+        "topojson.h",
+    ],
+    deps = [
+        "@earcut",
+        "@glm",
+        "@nlohmann_json//:json",
+    ],
+)

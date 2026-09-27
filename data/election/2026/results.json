@@ -1,0 +1,8 @@
+{
+  "schema": "twn_election.results/v1",
+  "status": "pre-election",
+  "source": "No votes yet: polls open 2026-11-28 08:00-16:00 (Asia/Taipei). Replace this file (or pass --results) with a live feed; the app hot-reloads it.",
+  "updated_at": "2026-09-27T00:00:00+08:00",
+  "races": {},
+  "referendums": {}
+}

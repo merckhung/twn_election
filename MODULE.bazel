@@ -1,0 +1,46 @@
+"""twn_election: 3D Taiwan election map + live vote dashboard.
+
+Bzlmod only -- there is intentionally no WORKSPACE file.
+"""
+
+module(
+    name = "twn_election",
+    version = "0.1.0",
+)
+
+bazel_dep(name = "rules_cc", version = "0.2.25")
+bazel_dep(name = "platforms", version = "1.1.0")
+
+# C++ third-party libraries from the Bazel Central Registry.
+bazel_dep(name = "vulkan_headers", version = "1.4.349")
+bazel_dep(name = "glm", version = "1.0.3")
+bazel_dep(name = "nlohmann_json", version = "3.12.0.bcr.2")
+bazel_dep(name = "earcut", version = "2.2.4")
+bazel_dep(name = "stb", version = "0.0.0-20251026-f1c79c0")
+bazel_dep(name = "freetype", version = "2.14.1.bcr.1")
+
+bazel_dep(name = "googletest", version = "1.17.0.bcr.2", dev_dependency = True)
+
+# Skia is not in the BCR, so it is fetched from its GitHub mirror at a pinned
+# commit and compiled with our own BUILD overlay (CPU raster backend +
+# FreeType fonts). Regenerate third_party/skia/skia_srcs.bzl with
+# tools/gen_skia_srcs.py whenever SKIA_COMMIT changes.
+git_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+git_repository(
+    name = "skia",
+    build_file = "//third_party/skia:skia.BUILD",
+    commit = "f8a15f6c43d41442518ae634fecbb9fc816aa8c1",  # 2026-09-27, milestone 156
+    # Skia's own (WORKSPACE-era) BUILD files would split the tree into packages;
+    # drop them so the overlay can glob across the whole source tree.
+    patch_cmds = ["find . -mindepth 2 \\( -name BUILD.bazel -o -name BUILD \\) -delete"],
+    remote = "https://github.com/google/skia.git",
+)
+
+# GLSL -> SPIR-V compiler (glslangValidator or glslc) discovered on the host.
+shader_tools = use_extension("//bazel:shader_tools.bzl", "shader_tools")
+use_repo(shader_tools, "shader_compiler")
+
+# Windowing: host GLFW 3 (see bazel/system_libs.bzl).
+system_libs = use_extension("//bazel:system_libs.bzl", "system_libs")
+use_repo(system_libs, "system_glfw")

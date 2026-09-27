@@ -1,0 +1,54 @@
+load("@rules_cc//cc:defs.bzl", "cc_test")
+
+cc_test(
+    name = "geo_test",
+    srcs = ["geo_test.cc"],
+    data = ["//:data"],
+    deps = [
+        "//src/election",
+        "//src/geo",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "election_test",
+    srcs = ["election_test.cc"],
+    data = [
+        "//:assets",
+        "//:data",
+    ],
+    deps = [
+        "//src/election",
+        "//src/geo",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "camera_test",
+    srcs = ["camera_test.cc"],
+    deps = [
+        "//src/app:camera",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "skia_raster_test",
+    srcs = ["skia_raster_test.cc"],
+    deps = [
+        "//src/ui",
+        "@googletest//:gtest_main",
+        "@skia",
+    ],
+)
+
+cc_test(
+    name = "i18n_test",
+    srcs = ["i18n_test.cc"],
+    deps = [
+        "//src/ui",
+        "@googletest//:gtest_main",
+    ],
+)

@@ -1,0 +1,115 @@
+{
+  "schema": "twn_election.parties/v1",
+  "parties": [
+    {
+      "code": "KMT",
+      "name_zh": "中國國民黨",
+      "name_en": "Kuomintang",
+      "short_zh": "國民黨",
+      "color": "#1A48B5",
+      "name_ja": "中国国民党",
+      "short_ja": "国民党",
+      "short_en": "KMT"
+    },
+    {
+      "code": "DPP",
+      "name_zh": "民主進步黨",
+      "name_en": "Democratic Progressive Party",
+      "short_zh": "民進黨",
+      "color": "#1B9431",
+      "name_ja": "民主進歩党",
+      "short_ja": "民進党",
+      "short_en": "DPP"
+    },
+    {
+      "code": "TPP",
+      "name_zh": "台灣民眾黨",
+      "name_en": "Taiwan People's Party",
+      "short_zh": "民眾黨",
+      "color": "#28B8C8",
+      "name_ja": "台湾民衆党",
+      "short_ja": "民衆党",
+      "short_en": "TPP"
+    },
+    {
+      "code": "TSU",
+      "name_zh": "台灣團結聯盟",
+      "name_en": "Taiwan Solidarity Union",
+      "short_zh": "台聯",
+      "color": "#B07A3B",
+      "name_ja": "台湾団結連盟",
+      "short_ja": "台連",
+      "short_en": "TSU"
+    },
+    {
+      "code": "LABOR",
+      "name_zh": "台灣工黨",
+      "name_en": "Taiwan Labor Party",
+      "short_zh": "工黨",
+      "color": "#C0392B",
+      "name_ja": "台湾工党",
+      "short_ja": "工党",
+      "short_en": "Labor"
+    },
+    {
+      "code": "MAHJONG",
+      "name_zh": "台灣麻將最大黨",
+      "name_en": "Taiwan Mahjong Party",
+      "short_zh": "麻將黨",
+      "color": "#D4851F",
+      "name_ja": "台湾麻雀最大党",
+      "short_ja": "麻雀党",
+      "short_en": "Mahjong"
+    },
+    {
+      "code": "SOR",
+      "name_zh": "台灣SoR無法黨",
+      "name_en": "Taiwan SoR Lawless Party",
+      "short_zh": "無法黨",
+      "color": "#8E44AD",
+      "name_ja": "台湾SoR無法党",
+      "short_ja": "無法党",
+      "short_en": "SoR"
+    },
+    {
+      "code": "THIRD",
+      "name_zh": "三勢團結促進聯盟",
+      "name_en": "Three Forces Unity Promotion Alliance",
+      "short_zh": "三勢聯盟",
+      "color": "#D35480",
+      "name_ja": "三勢団結促進連盟",
+      "short_ja": "三勢連盟",
+      "short_en": "3-Forces"
+    },
+    {
+      "code": "JJP",
+      "name_zh": "司法正義黨",
+      "name_en": "Judicial Justice Party",
+      "short_zh": "司法正義黨",
+      "color": "#5D6D9E",
+      "name_ja": "司法正義党",
+      "short_ja": "司法正義党",
+      "short_en": "JJP"
+    },
+    {
+      "code": "JRP",
+      "name_zh": "司法改革黨",
+      "name_en": "Judicial Reform Party",
+      "short_zh": "司改黨",
+      "color": "#7B5E57",
+      "name_ja": "司法改革党",
+      "short_ja": "司改党",
+      "short_en": "JRP"
+    },
+    {
+      "code": "IND",
+      "name_zh": "無黨籍",
+      "name_en": "Independent",
+      "short_zh": "無黨籍",
+      "color": "#8C8C8C",
+      "name_ja": "無所属",
+      "short_ja": "無所属",
+      "short_en": "Ind."
+    }
+  ]
+}

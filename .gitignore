@@ -1,0 +1,5 @@
+bazel-*
+user.bazelrc
+MODULE.bazel.lock
+/out/
+*.png.tmp

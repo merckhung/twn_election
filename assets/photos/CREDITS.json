@@ -1,0 +1,383 @@
+{
+  "63000-02": {
+    "name_zh": "沈伯洋",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/shenpao-yang.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 沈伯洋 / legislator / 全國不分區及僑居國外國民 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "65000-02": {
+    "name_zh": "蘇巧慧",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/suchiao-hui.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 蘇巧慧 / legislator / 新北市第5選舉區 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "66000-01": {
+    "name_zh": "何欣純",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/ho-hsin-chun.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 何欣純 / legislator / 臺中市第7選舉區 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "66000-02": {
+    "name_zh": "江啟臣",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/chiang-chi-chen.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 江啟臣 / legislator / 臺中市第8選舉區 / 國民黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "67000-01": {
+    "name_zh": "謝龍介",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/hsieh-lung-chieh.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 謝龍介 / legislator / 全國不分區及僑居國外國民 / 國民黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "300x400"
+  },
+  "67000-02": {
+    "name_zh": "陳亭妃",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/chen-ting-fei.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 陳亭妃 / legislator / 臺南市第3選舉區 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "64000-02": {
+    "name_zh": "賴瑞隆",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/laijui-lung.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 賴瑞隆 / legislator / 高雄市第8選舉區 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "64000-04": {
+    "name_zh": "柯志恩",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/ko-chih-en.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 柯志恩 / legislator / 全國不分區及僑居國外國民 / 國民黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "10020-03": {
+    "name_zh": "張啓楷",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/張啓楷-不分區.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 張啓楷 / legislator / 全國不分區及僑居國外國民 / 民眾黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028); resigned at-large seat Feb 2026",
+    "size": "311x400"
+  },
+  "10020-04": {
+    "name_zh": "王美惠",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/wangmei-hui.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 王美惠 / legislator / 嘉義市選舉區 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "10004-03": {
+    "name_zh": "徐欣瑩",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/hsu-hsin-ying.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 徐欣瑩 / legislator / 新竹縣第1選舉區 / 國民黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "10007-02": {
+    "name_zh": "陳素月",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/chensu-yueh.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 陳素月 / legislator / 彰化縣第4選舉區 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "312x400"
+  },
+  "10009-01": {
+    "name_zh": "張嘉郡",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/chang-chia-chun.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 張嘉郡 / legislator / 全國不分區及僑居國外國民 / 國民黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "10009-02": {
+    "name_zh": "劉建國",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/liu-chien-kuo.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 劉建國 / legislator / 雲林縣第2選舉區 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "10010-01": {
+    "name_zh": "蔡易餘",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/tsai-yi-yu.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 蔡易餘 / legislator / 嘉義縣第1選舉區 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "10013-02": {
+    "name_zh": "蘇清泉",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/su-ching-chuan.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 蘇清泉 / legislator / 全國不分區及僑居國外國民 / 國民黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "300x400"
+  },
+  "10002-01": {
+    "name_zh": "吳宗憲",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/wutsung-hsien.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 吳宗憲 / legislator / 全國不分區及僑居國外國民 / 國民黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "10014-02": {
+    "name_zh": "陳瑩",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/chen-ying.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 陳瑩 / legislator / 平地原住民選舉區 / 民進黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "09020-04": {
+    "name_zh": "陳玉珍",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/legislators/chenyu-jen.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 陳玉珍 / legislator / 金門縣選舉區 / 國民黨",
+    "original_origin": "Legislative Yuan official legislator portrait (www.ly.gov.tw, via ly.govapi.tw 照片位址 field), downscaled to 320px wide by source repo",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait; public government open data. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "11th Legislative Yuan term (2024-2028)",
+    "size": "311x400"
+  },
+  "63000-05": {
+    "name_zh": "蔣萬安",
+    "source_repo": "https://github.com/g0v/ly-tel",
+    "source_path": "web/images/legislators/1834.jpg",
+    "source_commit": "34d2ce9ffe400d55ca86787e227fa2da829f9e4a",
+    "matched_record": "web/data/mly-9.json & mly-10.json: uid 1834, 蔣萬安, TPE district 3 (same person later became current mayor/magistrate)",
+    "original_origin": "Legislative Yuan official legislator portrait (ly.gov.tw; mly-10.json image field https://www.ly.gov.tw/Images/Legislators/100095.jpg), mirrored by g0v ly-tel (last commit Mar 2020)",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "9th/10th Legislative Yuan term portrait (c. 2016-2020); older and low-res (160x214)",
+    "size": "160x214",
+    "alternate": {
+      "file": "/tmp/claude-0/-home-user-oluxos/361aa99c-53ed-50a3-8368-d08256da312a/scratchpad/alt/63000-05_commons.jpg",
+      "note": "more recent, larger photo from weryk153/legislator-background public/photos/mayors/mayor-taipei.jpg (zh.wikipedia infobox / Wikimedia Commons; author attribution not recorded)",
+      "source_repo": "https://github.com/weryk153/legislator-background",
+      "source_path": "public/photos/mayors/mayor-taipei.jpg"
+    }
+  },
+  "68000-01": {
+    "name_zh": "張善政",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/mayors/mayor-taoyuan.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 張善政 / mayor_magistrate / 桃園市 / 國民黨",
+    "original_origin": "zh.wikipedia infobox image (Wikimedia Commons) of the article on the incumbent 桃園市 mayor/magistrate, fetched by source repo scraper/enrich-mayor-photos.ts",
+    "license_note": "Wikimedia Commons image, typically CC BY-SA or public domain; exact file name/author NOT recorded in source repo — per-file attribution must be looked up on Commons before public reuse.",
+    "photo_year_or_term": "incumbent 桃園市 mayor/magistrate (term from 2022), photo as of source snapshot 2026",
+    "size": "311x400"
+  },
+  "10017-01": {
+    "name_zh": "謝國樑",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/mayors/mayor-keelung.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 謝國樑 / mayor_magistrate / 基隆市 / 國民黨",
+    "original_origin": "zh.wikipedia infobox image (Wikimedia Commons) of the article on the incumbent 基隆市 mayor/magistrate, fetched by source repo scraper/enrich-mayor-photos.ts",
+    "license_note": "Wikimedia Commons image, typically CC BY-SA or public domain; exact file name/author NOT recorded in source repo — per-file attribution must be looked up on Commons before public reuse.",
+    "photo_year_or_term": "incumbent 基隆市 mayor/magistrate (term from 2022), photo as of source snapshot 2026",
+    "size": "311x400"
+  },
+  "10018-01": {
+    "name_zh": "高虹安",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/mayors/mayor-hsinchu-city.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 高虹安 / mayor_magistrate / 新竹市 / 民眾黨",
+    "original_origin": "zh.wikipedia infobox image (Wikimedia Commons) of the article on the incumbent 新竹市 mayor/magistrate, fetched by source repo scraper/enrich-mayor-photos.ts",
+    "license_note": "Wikimedia Commons image, typically CC BY-SA or public domain; exact file name/author NOT recorded in source repo — per-file attribution must be looked up on Commons before public reuse.",
+    "photo_year_or_term": "incumbent 新竹市 mayor/magistrate (term from 2022), photo as of source snapshot 2026",
+    "size": "287x400"
+  },
+  "10005-02": {
+    "name_zh": "鍾東錦",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/mayors/mayor-miaoli.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 鍾東錦 / mayor_magistrate / 苗栗縣 / 無黨籍",
+    "original_origin": "zh.wikipedia infobox image (Wikimedia Commons) of the article on the incumbent 苗栗縣 mayor/magistrate, fetched by source repo scraper/enrich-mayor-photos.ts",
+    "license_note": "Wikimedia Commons image, typically CC BY-SA or public domain; exact file name/author NOT recorded in source repo — per-file attribution must be looked up on Commons before public reuse.",
+    "photo_year_or_term": "incumbent 苗栗縣 mayor/magistrate (term from 2022), photo as of source snapshot 2026",
+    "size": "300x400"
+  },
+  "10008-02": {
+    "name_zh": "許淑華",
+    "source_repo": "https://github.com/g0v/ly-tel",
+    "source_path": "web/images/legislators/1811.jpg",
+    "source_commit": "34d2ce9ffe400d55ca86787e227fa2da829f9e4a",
+    "matched_record": "web/data/mly-9.json & mly-10.json: uid 1811, 許淑華, Nantou district 2 (same person later became current mayor/magistrate)",
+    "original_origin": "Legislative Yuan official legislator portrait (ly.gov.tw; mly-10.json image field https://www.ly.gov.tw/Images/Legislators/100055.jpg), mirrored by g0v ly-tel (last commit Mar 2020)",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "9th/10th Legislative Yuan term portrait (c. 2016-2020); older and low-res (160x214)",
+    "size": "160x214",
+    "alternate": {
+      "file": "/tmp/claude-0/-home-user-oluxos/361aa99c-53ed-50a3-8368-d08256da312a/scratchpad/alt/10008-02_commons.jpg",
+      "note": "more recent, larger photo from weryk153/legislator-background public/photos/mayors/mayor-nantou.jpg (zh.wikipedia infobox / Wikimedia Commons; author attribution not recorded)",
+      "source_repo": "https://github.com/weryk153/legislator-background",
+      "source_path": "public/photos/mayors/mayor-nantou.jpg"
+    }
+  },
+  "10013-01": {
+    "name_zh": "周春米",
+    "source_repo": "https://github.com/g0v/ly-tel",
+    "source_path": "web/images/legislators/1823.jpg",
+    "source_commit": "34d2ce9ffe400d55ca86787e227fa2da829f9e4a",
+    "matched_record": "web/data/mly-9.json & mly-10.json: uid 1823, 周春米, at-large (proportional) (same person later became current mayor/magistrate)",
+    "original_origin": "Legislative Yuan official legislator portrait (ly.gov.tw; mly-10.json image field https://www.ly.gov.tw/Images/Legislators/100022.jpg), mirrored by g0v ly-tel (last commit Mar 2020)",
+    "license_note": "Taiwan government (Legislative Yuan) official portrait. Credit: 立法院 (Legislative Yuan).",
+    "photo_year_or_term": "9th/10th Legislative Yuan term portrait (c. 2016-2020); older and low-res (160x214)",
+    "size": "160x214",
+    "alternate": {
+      "file": "/tmp/claude-0/-home-user-oluxos/361aa99c-53ed-50a3-8368-d08256da312a/scratchpad/alt/10013-01_commons.jpg",
+      "note": "more recent, larger photo from weryk153/legislator-background public/photos/mayors/mayor-pingtung.jpg (zh.wikipedia infobox / Wikimedia Commons; author attribution not recorded)",
+      "source_repo": "https://github.com/weryk153/legislator-background",
+      "source_path": "public/photos/mayors/mayor-pingtung.jpg"
+    }
+  },
+  "09007-01": {
+    "name_zh": "王忠銘",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/mayors/mayor-lienchiang.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 王忠銘 / mayor_magistrate / 連江縣 / 無黨籍",
+    "original_origin": "zh.wikipedia infobox image (Wikimedia Commons) of the article on the incumbent 連江縣 mayor/magistrate, fetched by source repo scraper/enrich-mayor-photos.ts",
+    "license_note": "Wikimedia Commons image, typically CC BY-SA or public domain; exact file name/author NOT recorded in source repo — per-file attribution must be looked up on Commons before public reuse.",
+    "photo_year_or_term": "incumbent 連江縣 mayor/magistrate (term from 2022), photo as of source snapshot 2026",
+    "size": "300x400"
+  },
+  "10017-02": {
+    "name_zh": "童子瑋",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/councilors/c-童子瑋-民進黨-基隆市第03選舉區.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 童子瑋 / councilor / 基隆市第03選舉區 / 民進黨",
+    "original_origin": "基隆市 County/City Council official website councilor profile photo, collected by source repo (see docs/superpowers/specs/2026-07-24-councilor-photos-design.md)",
+    "license_note": "Government (county/city council) website portrait; public government information, credit the council.",
+    "photo_year_or_term": "incumbent councilor, 基隆市第03選舉區 (term 2022-2026)",
+    "size": "300x400"
+  },
+  "10005-01": {
+    "name_zh": "陳品安",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/councilors/c-陳品安-無黨籍及未經政黨推薦-苗栗縣第03選舉區.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 陳品安 / councilor / 苗栗縣第03選舉區 / 無黨籍及未經政黨推薦",
+    "original_origin": "苗栗縣 County/City Council official website councilor profile photo, collected by source repo (see docs/superpowers/specs/2026-07-24-councilor-photos-design.md)",
+    "license_note": "Government (county/city council) website portrait; public government information, credit the council.",
+    "photo_year_or_term": "incumbent councilor, 苗栗縣第03選舉區 (term 2022-2026)",
+    "size": "200x237"
+  },
+  "10007-03": {
+    "name_zh": "陳重嘉",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/councilors/c-陳重嘉-民眾黨-彰化縣第05選舉區.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 陳重嘉 / councilor / 彰化縣第05選舉區 / 民眾黨",
+    "original_origin": "彰化縣 County/City Council official website councilor profile photo, collected by source repo (see docs/superpowers/specs/2026-07-24-councilor-photos-design.md)",
+    "license_note": "Government (county/city council) website portrait; public government information, credit the council.",
+    "photo_year_or_term": "incumbent councilor, 彰化縣第05選舉區 (term 2022-2026)",
+    "size": "200x190"
+  },
+  "10015-02": {
+    "name_zh": "張峻",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/councilors/c-張峻-無黨籍及未經政黨推薦-花蓮縣第03選舉區.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 張峻 / councilor / 花蓮縣第03選舉區 / 無黨籍及未經政黨推薦",
+    "original_origin": "花蓮縣 County/City Council official website councilor profile photo, collected by source repo (see docs/superpowers/specs/2026-07-24-councilor-photos-design.md)",
+    "license_note": "Government (county/city council) website portrait; public government information, credit the council.",
+    "photo_year_or_term": "incumbent councilor, 花蓮縣第03選舉區 (term 2022-2026)",
+    "size": "246x300"
+  },
+  "10015-03": {
+    "name_zh": "魏嘉賢",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/councilors/c-魏嘉賢-無黨籍及未經政黨推薦-花蓮縣第01選舉區.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 魏嘉賢 / councilor / 花蓮縣第01選舉區 / 無黨籍及未經政黨推薦",
+    "original_origin": "花蓮縣 County/City Council official website councilor profile photo, collected by source repo (see docs/superpowers/specs/2026-07-24-councilor-photos-design.md)",
+    "license_note": "Government (county/city council) website portrait; public government information, credit the council.",
+    "photo_year_or_term": "incumbent councilor, 花蓮縣第01選舉區 (term 2022-2026)",
+    "size": "246x300"
+  },
+  "10014-01": {
+    "name_zh": "吳秀華",
+    "source_repo": "https://github.com/weryk153/legislator-background",
+    "source_path": "public/photos/councilors/c-吳秀華-國民黨-臺東縣第01選舉區.jpg",
+    "source_commit": "86538dd3e67867b2cf372615fc59b01d9c6c0654",
+    "matched_record": "officials.json: 吳秀華 / councilor / 臺東縣第01選舉區 / 國民黨",
+    "original_origin": "臺東縣 County/City Council official website councilor profile photo, collected by source repo (see docs/superpowers/specs/2026-07-24-councilor-photos-design.md)",
+    "license_note": "Government (county/city council) website portrait; public government information, credit the council.",
+    "photo_year_or_term": "incumbent councilor, 臺東縣第01選舉區 (term 2022-2026)",
+    "size": "250x314"
+  }
+}

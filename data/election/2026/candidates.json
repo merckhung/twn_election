@@ -1,0 +1,1369 @@
+{
+  "schema": "twn_election.candidates/v1",
+  "election": {
+    "id": "2026-local",
+    "date": "2026-11-28",
+    "polls_open": "08:00",
+    "polls_close": "16:00",
+    "timezone": "Asia/Taipei",
+    "name_zh": "115年地方公職人員選舉（九合一選舉）",
+    "name_en": "2026 Taiwanese local elections (nine-in-one)"
+  },
+  "status_note": "Registered candidates as of the 2026-09-04 registration close. CEC eligibility review ends 2026-10-16; ballot numbers are drawn 2026-10-23, so ballot_no is null until then.",
+  "races": [
+    {
+      "id": "63000-mayor",
+      "county_code": "63000",
+      "county_zh": "臺北市",
+      "county_en": "Taipei City",
+      "office": "mayor",
+      "office_zh": "市長",
+      "municipal": true,
+      "incumbent": {
+        "name_zh": "蔣萬安",
+        "party": "KMT",
+        "term_limited": false,
+        "note": ""
+      },
+      "candidates": [
+        {
+          "id": "63000-01",
+          "name_zh": "郭璽",
+          "name_en": "Kuo Hsi",
+          "romanization_guess": true,
+          "party": "MAHJONG",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/63000-01.jpg",
+          "note": "Party chairman; registered 8/31 (first). Registration order 1."
+        },
+        {
+          "id": "63000-02",
+          "name_zh": "沈伯洋",
+          "name_en": "Puma Shen (Shen Po-yang)",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/63000-02.jpg",
+          "note": "DPP legislator; registered 9/2."
+        },
+        {
+          "id": "63000-03",
+          "name_zh": "蕭文乾",
+          "name_en": "Hsiao Wen-chien",
+          "romanization_guess": true,
+          "party": "SOR",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/63000-03.jpg",
+          "note": "Party name as reported by CNA: 台灣SoR無法黨."
+        },
+        {
+          "id": "63000-04",
+          "name_zh": "唐新民",
+          "name_en": "Tang Hsin-min",
+          "romanization_guess": true,
+          "party": "THIRD",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/63000-04.jpg",
+          "note": ""
+        },
+        {
+          "id": "63000-05",
+          "name_zh": "蔣萬安",
+          "name_en": "Chiang Wan-an",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": true,
+          "photo": "assets/photos/63000-05.jpg",
+          "note": "Seeking re-election; registered 9/4."
+        },
+        {
+          "id": "63000-06",
+          "name_zh": "林志成",
+          "name_en": "Lin Chih-cheng",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/63000-06.jpg",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "65000-mayor",
+      "county_code": "65000",
+      "county_zh": "新北市",
+      "county_en": "New Taipei City",
+      "office": "mayor",
+      "office_zh": "市長",
+      "municipal": true,
+      "incumbent": {
+        "name_zh": "侯友宜",
+        "party": "KMT",
+        "term_limited": true,
+        "note": "Hou Yu-ih (侯友宜), second consecutive term (2018, 2022)."
+      },
+      "candidates": [
+        {
+          "id": "65000-01",
+          "name_zh": "李四川",
+          "name_en": "Lee Szu-chuan",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/65000-01.jpg",
+          "note": "KMT-TPP joint ('blue-white') candidate."
+        },
+        {
+          "id": "65000-02",
+          "name_zh": "蘇巧慧",
+          "name_en": "Su Chiao-hui",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/65000-02.jpg",
+          "note": ""
+        },
+        {
+          "id": "65000-03",
+          "name_zh": "蘇輝湟",
+          "name_en": "Su Hui-huang",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/65000-03.jpg",
+          "note": "Registered 5:16pm on 9/4 (last-minute)."
+        }
+      ]
+    },
+    {
+      "id": "68000-mayor",
+      "county_code": "68000",
+      "county_zh": "桃園市",
+      "county_en": "Taoyuan City",
+      "office": "mayor",
+      "office_zh": "市長",
+      "municipal": true,
+      "incumbent": {
+        "name_zh": "張善政",
+        "party": "KMT",
+        "term_limited": false,
+        "note": ""
+      },
+      "candidates": [
+        {
+          "id": "68000-01",
+          "name_zh": "張善政",
+          "name_en": "Chang San-cheng",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": true,
+          "photo": "assets/photos/68000-01.jpg",
+          "note": "Registered 9/1."
+        },
+        {
+          "id": "68000-02",
+          "name_zh": "黃世杰",
+          "name_en": "Huang Shih-chieh",
+          "romanization_guess": true,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/68000-02.jpg",
+          "note": "DPP legislator; registered 9/2."
+        }
+      ]
+    },
+    {
+      "id": "66000-mayor",
+      "county_code": "66000",
+      "county_zh": "臺中市",
+      "county_en": "Taichung City",
+      "office": "mayor",
+      "office_zh": "市長",
+      "municipal": true,
+      "incumbent": {
+        "name_zh": "盧秀燕",
+        "party": "KMT",
+        "term_limited": true,
+        "note": "Lu Shiow-yen (盧秀燕), second consecutive term."
+      },
+      "candidates": [
+        {
+          "id": "66000-01",
+          "name_zh": "何欣純",
+          "name_en": "Ho Hsin-chun",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/66000-01.jpg",
+          "note": "Registered 9/2."
+        },
+        {
+          "id": "66000-02",
+          "name_zh": "江啟臣",
+          "name_en": "Johnny Chiang (Chiang Chi-chen)",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/66000-02.jpg",
+          "note": "Registered 9/3."
+        },
+        {
+          "id": "66000-03",
+          "name_zh": "洪麗華",
+          "name_en": "Hung Li-hua",
+          "romanization_guess": true,
+          "party": "JJP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/66000-03.jpg",
+          "note": "Party reported by CNA as 司法正義黨; former borough chief of 鹿寮里, Shalu. Registered 9/3."
+        }
+      ]
+    },
+    {
+      "id": "67000-mayor",
+      "county_code": "67000",
+      "county_zh": "臺南市",
+      "county_en": "Tainan City",
+      "office": "mayor",
+      "office_zh": "市長",
+      "municipal": true,
+      "incumbent": {
+        "name_zh": "黃偉哲",
+        "party": "DPP",
+        "term_limited": true,
+        "note": "Huang Wei-che (黃偉哲), second consecutive term."
+      },
+      "candidates": [
+        {
+          "id": "67000-01",
+          "name_zh": "謝龍介",
+          "name_en": "Hsieh Lung-chieh",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/67000-01.jpg",
+          "note": ""
+        },
+        {
+          "id": "67000-02",
+          "name_zh": "陳亭妃",
+          "name_en": "Chen Ting-fei",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/67000-02.jpg",
+          "note": ""
+        },
+        {
+          "id": "67000-03",
+          "name_zh": "蕭燐洪",
+          "name_en": "Hsiao Lin-hung",
+          "romanization_guess": true,
+          "party": "SOR",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/67000-03.jpg",
+          "note": "83 years old; some reports write the party as 臺灣SoR無法黨."
+        },
+        {
+          "id": "67000-04",
+          "name_zh": "葉人文",
+          "name_en": "Yeh Jen-wen",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/67000-04.jpg",
+          "note": "38 years old."
+        }
+      ]
+    },
+    {
+      "id": "64000-mayor",
+      "county_code": "64000",
+      "county_zh": "高雄市",
+      "county_en": "Kaohsiung City",
+      "office": "mayor",
+      "office_zh": "市長",
+      "municipal": true,
+      "incumbent": {
+        "name_zh": "陳其邁",
+        "party": "DPP",
+        "term_limited": true,
+        "note": "Chen Chi-mai (陳其邁): won the 2020 by-election, then the 2022 election. Treated as re-elected once under Local Government Act Art. 55, so he is barred."
+      },
+      "candidates": [
+        {
+          "id": "64000-01",
+          "name_zh": "張靜",
+          "name_en": "Chang Ching",
+          "romanization_guess": true,
+          "party": "JRP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/64000-01.jpg",
+          "note": "Chairman of 司法改革黨; registered 8/31 (first)."
+        },
+        {
+          "id": "64000-02",
+          "name_zh": "賴瑞隆",
+          "name_en": "Lai Jui-lung",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/64000-02.jpg",
+          "note": ""
+        },
+        {
+          "id": "64000-03",
+          "name_zh": "王肇民",
+          "name_en": "Wang Chao-min",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/64000-03.jpg",
+          "note": "Construction company head."
+        },
+        {
+          "id": "64000-04",
+          "name_zh": "柯志恩",
+          "name_en": "Ko Chih-en",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/64000-04.jpg",
+          "note": ""
+        },
+        {
+          "id": "64000-05",
+          "name_zh": "洪方隆",
+          "name_en": "Hung Fang-lung",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/64000-05.jpg",
+          "note": "Founder of a telecom firm."
+        }
+      ]
+    },
+    {
+      "id": "10017-mayor",
+      "county_code": "10017",
+      "county_zh": "基隆市",
+      "county_en": "Keelung City",
+      "office": "mayor",
+      "office_zh": "市長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "謝國樑",
+        "party": "KMT",
+        "term_limited": false,
+        "note": ""
+      },
+      "candidates": [
+        {
+          "id": "10017-01",
+          "name_zh": "謝國樑",
+          "name_en": "George Hsieh (Hsieh Kuo-liang)",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": true,
+          "photo": "assets/photos/10017-01.jpg",
+          "note": "Registered 9/1, accompanied by KMT and TPP local chairs."
+        },
+        {
+          "id": "10017-02",
+          "name_zh": "童子瑋",
+          "name_en": "Tung Tzu-wei",
+          "romanization_guess": true,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10017-02.jpg",
+          "note": "Keelung City Council speaker."
+        },
+        {
+          "id": "10017-03",
+          "name_zh": "魏造文",
+          "name_en": "Wei Tsao-wen",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10017-03.jpg",
+          "note": "Registered 9/1; little public profile."
+        }
+      ]
+    },
+    {
+      "id": "10018-mayor",
+      "county_code": "10018",
+      "county_zh": "新竹市",
+      "county_en": "Hsinchu City",
+      "office": "mayor",
+      "office_zh": "市長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "高虹安",
+        "party": "IND",
+        "term_limited": false,
+        "note": "Ann Kao (高虹安), elected 2022 on the TPP ticket, now non-partisan; first term."
+      },
+      "candidates": [
+        {
+          "id": "10018-01",
+          "name_zh": "高虹安",
+          "name_en": "Ann Kao (Kao Hung-an)",
+          "romanization_guess": false,
+          "party": "IND",
+          "endorsed_by": [
+            "KMT",
+            "TPP"
+          ],
+          "ballot_no": null,
+          "incumbent": true,
+          "photo": "assets/photos/10018-01.jpg",
+          "note": "Elected 2022 as TPP; now non-partisan; backed by KMT and TPP."
+        },
+        {
+          "id": "10018-02",
+          "name_zh": "莊競程",
+          "name_en": "Chuang Ching-cheng",
+          "romanization_guess": true,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10018-02.jpg",
+          "note": ""
+        },
+        {
+          "id": "10018-03",
+          "name_zh": "何志勇",
+          "name_en": "Ho Chih-yung",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10018-03.jpg",
+          "note": "From KMT camp; registered without KMT approval, may face party discipline."
+        }
+      ]
+    },
+    {
+      "id": "10020-mayor",
+      "county_code": "10020",
+      "county_zh": "嘉義市",
+      "county_en": "Chiayi City",
+      "office": "mayor",
+      "office_zh": "市長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "黃敏惠",
+        "party": "KMT",
+        "term_limited": true,
+        "note": "Huang Min-hui (黃敏惠), consecutive terms 2018 and 2022; backing TPP's Chang Chi-kai."
+      },
+      "candidates": [
+        {
+          "id": "10020-01",
+          "name_zh": "黃宏成台灣阿成世界偉人財神總統",
+          "name_en": "Huang Hung-cheng",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10020-01.jpg",
+          "note": "Full legal name; a perennial candidate."
+        },
+        {
+          "id": "10020-02",
+          "name_zh": "陳愷璜",
+          "name_en": "Chen Kai-huang",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10020-02.jpg",
+          "note": ""
+        },
+        {
+          "id": "10020-03",
+          "name_zh": "張啓楷",
+          "name_en": "Chang Chi-kai",
+          "romanization_guess": false,
+          "party": "TPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10020-03.jpg",
+          "note": "KMT-TPP joint candidate; KMT did not field a candidate."
+        },
+        {
+          "id": "10020-04",
+          "name_zh": "王美惠",
+          "name_en": "Wang Mei-hui",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10020-04.jpg",
+          "note": ""
+        },
+        {
+          "id": "10020-05",
+          "name_zh": "王義成",
+          "name_en": "Wang Yi-cheng",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10020-05.jpg",
+          "note": "Fifth registrant; political newcomer."
+        }
+      ]
+    },
+    {
+      "id": "10004-mayor",
+      "county_code": "10004",
+      "county_zh": "新竹縣",
+      "county_en": "Hsinchu County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "楊文科",
+        "party": "KMT",
+        "term_limited": true,
+        "note": "Yang Wen-ke (楊文科), second consecutive term."
+      },
+      "candidates": [
+        {
+          "id": "10004-01",
+          "name_zh": "鄭朝方",
+          "name_en": "Cheng Chao-fang",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10004-01.jpg",
+          "note": ""
+        },
+        {
+          "id": "10004-02",
+          "name_zh": "朱定瑀",
+          "name_en": "Chu Ting-yu",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10004-02.jpg",
+          "note": "Telecom engineering business owner."
+        },
+        {
+          "id": "10004-03",
+          "name_zh": "徐欣瑩",
+          "name_en": "Hsu Hsin-ying",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10004-03.jpg",
+          "note": "Deputy magistrate 陳見賢 did not register."
+        }
+      ]
+    },
+    {
+      "id": "10005-mayor",
+      "county_code": "10005",
+      "county_zh": "苗栗縣",
+      "county_en": "Miaoli County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "鍾東錦",
+        "party": "KMT",
+        "term_limited": false,
+        "note": "Chung Tung-chin (鍾東錦), elected 2022 as an independent, KMT membership restored 2025; first term."
+      },
+      "candidates": [
+        {
+          "id": "10005-01",
+          "name_zh": "陳品安",
+          "name_en": "Chen Pin-an",
+          "romanization_guess": true,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10005-01.jpg",
+          "note": "Registered 9/2."
+        },
+        {
+          "id": "10005-02",
+          "name_zh": "鍾東錦",
+          "name_en": "Chung Tung-chin",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": true,
+          "photo": "assets/photos/10005-02.jpg",
+          "note": "Elected 2022 as an independent; KMT membership restored 2025. Registered 9/3."
+        }
+      ]
+    },
+    {
+      "id": "10007-mayor",
+      "county_code": "10007",
+      "county_zh": "彰化縣",
+      "county_en": "Changhua County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "王惠美",
+        "party": "KMT",
+        "term_limited": true,
+        "note": "Wang Huei-mei (王惠美), second consecutive term."
+      },
+      "candidates": [
+        {
+          "id": "10007-01",
+          "name_zh": "邱建富",
+          "name_en": "Chiu Chien-fu",
+          "romanization_guess": false,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10007-01.jpg",
+          "note": "Former Changhua City mayor; left DPP to run."
+        },
+        {
+          "id": "10007-02",
+          "name_zh": "陳素月",
+          "name_en": "Chen Su-yueh",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10007-02.jpg",
+          "note": ""
+        },
+        {
+          "id": "10007-03",
+          "name_zh": "陳重嘉",
+          "name_en": "Chen Chung-chia",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10007-03.jpg",
+          "note": "County councilor."
+        },
+        {
+          "id": "10007-04",
+          "name_zh": "魏平政",
+          "name_en": "Wei Ping-cheng",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10007-04.jpg",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "10008-mayor",
+      "county_code": "10008",
+      "county_zh": "南投縣",
+      "county_en": "Nantou County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "許淑華",
+        "party": "KMT",
+        "term_limited": false,
+        "note": ""
+      },
+      "candidates": [
+        {
+          "id": "10008-01",
+          "name_zh": "溫世政",
+          "name_en": "Wen Shih-cheng",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10008-01.jpg",
+          "note": "Also written 温世政. Registered 8/31."
+        },
+        {
+          "id": "10008-02",
+          "name_zh": "許淑華",
+          "name_en": "Hsu Shu-hua",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": true,
+          "photo": "assets/photos/10008-02.jpg",
+          "note": "Registered 9/2."
+        }
+      ]
+    },
+    {
+      "id": "10009-mayor",
+      "county_code": "10009",
+      "county_zh": "雲林縣",
+      "county_en": "Yunlin County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "張麗善",
+        "party": "KMT",
+        "term_limited": true,
+        "note": "Chang Li-shan (張麗善), second consecutive term."
+      },
+      "candidates": [
+        {
+          "id": "10009-01",
+          "name_zh": "張嘉郡",
+          "name_en": "Chang Chia-chun",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10009-01.jpg",
+          "note": ""
+        },
+        {
+          "id": "10009-02",
+          "name_zh": "劉建國",
+          "name_en": "Liu Chien-kuo",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10009-02.jpg",
+          "note": ""
+        },
+        {
+          "id": "10009-03",
+          "name_zh": "吳炳輝",
+          "name_en": "Wu Ping-hui",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10009-03.jpg",
+          "note": "Lawyer; registered 8/31."
+        },
+        {
+          "id": "10009-04",
+          "name_zh": "林佳瑜",
+          "name_en": "Lin Chia-yu",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10009-04.jpg",
+          "note": "Dentist; registered at deadline 9/4; fourth run for magistrate."
+        }
+      ]
+    },
+    {
+      "id": "10010-mayor",
+      "county_code": "10010",
+      "county_zh": "嘉義縣",
+      "county_en": "Chiayi County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "翁章梁",
+        "party": "DPP",
+        "term_limited": true,
+        "note": "Weng Chang-liang (翁章梁), second consecutive term."
+      },
+      "candidates": [
+        {
+          "id": "10010-01",
+          "name_zh": "蔡易餘",
+          "name_en": "Tsai Yi-yu",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10010-01.jpg",
+          "note": ""
+        },
+        {
+          "id": "10010-02",
+          "name_zh": "吳品叡",
+          "name_en": "Wu Pin-jui",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [
+            "KMT",
+            "TPP"
+          ],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10010-02.jpg",
+          "note": "Puzi City mayor; runs as non-partisan 'opposition alliance' candidate backed by KMT and TPP."
+        }
+      ]
+    },
+    {
+      "id": "10013-mayor",
+      "county_code": "10013",
+      "county_zh": "屏東縣",
+      "county_en": "Pingtung County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "周春米",
+        "party": "DPP",
+        "term_limited": false,
+        "note": ""
+      },
+      "candidates": [
+        {
+          "id": "10013-01",
+          "name_zh": "周春米",
+          "name_en": "Chou Chun-mi",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": true,
+          "photo": "assets/photos/10013-01.jpg",
+          "note": ""
+        },
+        {
+          "id": "10013-02",
+          "name_zh": "蘇清泉",
+          "name_en": "Su Ching-chuan",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10013-02.jpg",
+          "note": "Third straight run for magistrate."
+        }
+      ]
+    },
+    {
+      "id": "10002-mayor",
+      "county_code": "10002",
+      "county_zh": "宜蘭縣",
+      "county_en": "Yilan County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "林姿妙",
+        "party": "KMT",
+        "term_limited": true,
+        "note": "Lin Zi-miao (林姿妙), second consecutive term."
+      },
+      "candidates": [
+        {
+          "id": "10002-01",
+          "name_zh": "吳宗憲",
+          "name_en": "Wu Tsung-hsien",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10002-01.jpg",
+          "note": "KMT-TPP joint candidate."
+        },
+        {
+          "id": "10002-02",
+          "name_zh": "林國漳",
+          "name_en": "Lin Kuo-chang",
+          "romanization_guess": true,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10002-02.jpg",
+          "note": ""
+        },
+        {
+          "id": "10002-03",
+          "name_zh": "陳宏毅",
+          "name_en": "Chen Hung-yi",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10002-03.jpg",
+          "note": "First to register, 8/31."
+        },
+        {
+          "id": "10002-04",
+          "name_zh": "劉燦輝",
+          "name_en": "Liu Tsan-hui",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10002-04.jpg",
+          "note": ""
+        },
+        {
+          "id": "10002-05",
+          "name_zh": "楊鉯婷",
+          "name_en": "Yang Yi-ting",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10002-05.jpg",
+          "note": "Registered on the deadline day 9/4; 39 years old."
+        }
+      ]
+    },
+    {
+      "id": "10015-mayor",
+      "county_code": "10015",
+      "county_zh": "花蓮縣",
+      "county_en": "Hualien County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "徐榛蔚",
+        "party": "KMT",
+        "term_limited": true,
+        "note": "Hsu Chen-wei (徐榛蔚), second consecutive term."
+      },
+      "candidates": [
+        {
+          "id": "10015-01",
+          "name_zh": "游淑貞",
+          "name_en": "Yu Shu-chen",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10015-01.jpg",
+          "note": ""
+        },
+        {
+          "id": "10015-02",
+          "name_zh": "張峻",
+          "name_en": "Chang Chun",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [
+            "DPP"
+          ],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10015-02.jpg",
+          "note": "Hualien County Council speaker, from the KMT camp; backed by DPP (DPP fielded no nominee)."
+        },
+        {
+          "id": "10015-03",
+          "name_zh": "魏嘉賢",
+          "name_en": "Wei Chia-hsien",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10015-03.jpg",
+          "note": "County councilor from the KMT camp."
+        },
+        {
+          "id": "10015-04",
+          "name_zh": "羅佩秦",
+          "name_en": "Lo Pei-chin",
+          "romanization_guess": true,
+          "party": "LABOR",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10015-04.jpg",
+          "note": "Recommended by 台灣工黨 and other third-force groups; his diploma was questioned but the registration was accepted."
+        }
+      ]
+    },
+    {
+      "id": "10014-mayor",
+      "county_code": "10014",
+      "county_zh": "臺東縣",
+      "county_en": "Taitung County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "饒慶鈴",
+        "party": "KMT",
+        "term_limited": true,
+        "note": "Rao Ching-ling (饒慶鈴), second consecutive term."
+      },
+      "candidates": [
+        {
+          "id": "10014-01",
+          "name_zh": "吳秀華",
+          "name_en": "Wu Hsiu-hua",
+          "romanization_guess": true,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10014-01.jpg",
+          "note": "County council speaker."
+        },
+        {
+          "id": "10014-02",
+          "name_zh": "陳瑩",
+          "name_en": "Chen Ying",
+          "romanization_guess": false,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10014-02.jpg",
+          "note": "Plains indigenous legislator."
+        },
+        {
+          "id": "10014-03",
+          "name_zh": "李吳穎智",
+          "name_en": "Li Wu Ying-chih",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10014-03.jpg",
+          "note": "Registered on the last day."
+        },
+        {
+          "id": "10014-04",
+          "name_zh": "王志偉",
+          "name_en": "Wang Chih-wei",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10014-04.jpg",
+          "note": "Registered on the last day; chair of a custard apple cooperative."
+        }
+      ]
+    },
+    {
+      "id": "10016-mayor",
+      "county_code": "10016",
+      "county_zh": "澎湖縣",
+      "county_en": "Penghu County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "陳光復",
+        "party": "DPP",
+        "term_limited": false,
+        "note": "Chen Kuang-fu (陳光復), DPP. His terms (2014-18, 2022-26) were not consecutive, so he is not term-limited, but he is not running after a head injury in early 2026. His wife Wu Shu-chin is running."
+      },
+      "candidates": [
+        {
+          "id": "10016-01",
+          "name_zh": "吳淑瑾",
+          "name_en": "Wu Shu-chin",
+          "romanization_guess": true,
+          "party": "DPP",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10016-01.jpg",
+          "note": "Wife of incumbent Chen Kuang-fu, running in his place after his head injury."
+        },
+        {
+          "id": "10016-02",
+          "name_zh": "陳振中",
+          "name_en": "Chen Chen-chung",
+          "romanization_guess": true,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10016-02.jpg",
+          "note": ""
+        },
+        {
+          "id": "10016-03",
+          "name_zh": "周倪安",
+          "name_en": "Chou Ni-an",
+          "romanization_guess": false,
+          "party": "TSU",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10016-03.jpg",
+          "note": "TSU chairwoman."
+        },
+        {
+          "id": "10016-04",
+          "name_zh": "許智富",
+          "name_en": "Hsu Chih-fu",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10016-04.jpg",
+          "note": "Former deputy magistrate."
+        },
+        {
+          "id": "10016-05",
+          "name_zh": "陳盡川",
+          "name_en": "Chen Chin-chuan",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10016-05.jpg",
+          "note": "Ocean volunteer team leader."
+        },
+        {
+          "id": "10016-06",
+          "name_zh": "葉竹林",
+          "name_en": "Yeh Chu-lin",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/10016-06.jpg",
+          "note": "Former Magong mayor; last to register."
+        }
+      ]
+    },
+    {
+      "id": "09020-mayor",
+      "county_code": "09020",
+      "county_zh": "金門縣",
+      "county_en": "Kinmen County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "陳福海",
+        "party": "IND",
+        "term_limited": false,
+        "note": "Chen Fu-hai (陳福海), independent, first term. Not term-limited, but barred by the 2023 'anti-gangster' (排黑) clause over a past bribery conviction."
+      },
+      "candidates": [
+        {
+          "id": "09020-01",
+          "name_zh": "洪和成",
+          "name_en": "Hung Ho-cheng",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/09020-01.jpg",
+          "note": ""
+        },
+        {
+          "id": "09020-02",
+          "name_zh": "李文良",
+          "name_en": "Li Wen-liang",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/09020-02.jpg",
+          "note": "Former deputy magistrate."
+        },
+        {
+          "id": "09020-03",
+          "name_zh": "黃世團",
+          "name_en": "Huang Shih-tuan",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/09020-03.jpg",
+          "note": ""
+        },
+        {
+          "id": "09020-04",
+          "name_zh": "陳玉珍",
+          "name_en": "Chen Yu-jen (Jessica Chen)",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/09020-04.jpg",
+          "note": "KMT legislator."
+        },
+        {
+          "id": "09020-05",
+          "name_zh": "張國威",
+          "name_en": "Chang Kuo-wei",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/09020-05.jpg",
+          "note": ""
+        },
+        {
+          "id": "09020-06",
+          "name_zh": "梁文韜",
+          "name_en": "Liang Wen-tao",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/09020-06.jpg",
+          "note": "NCKU professor."
+        },
+        {
+          "id": "09020-07",
+          "name_zh": "張火木",
+          "name_en": "Chang Huo-mu",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/09020-07.jpg",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "id": "09007-mayor",
+      "county_code": "09007",
+      "county_zh": "連江縣",
+      "county_en": "Lienchiang County",
+      "office": "mayor",
+      "office_zh": "縣長",
+      "municipal": false,
+      "incumbent": {
+        "name_zh": "王忠銘",
+        "party": "KMT",
+        "term_limited": false,
+        "note": ""
+      },
+      "candidates": [
+        {
+          "id": "09007-01",
+          "name_zh": "王忠銘",
+          "name_en": "Wang Chung-ming",
+          "romanization_guess": false,
+          "party": "KMT",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": true,
+          "photo": "assets/photos/09007-01.jpg",
+          "note": "Registered 8/31."
+        },
+        {
+          "id": "09007-02",
+          "name_zh": "曹爾元",
+          "name_en": "Tsao Erh-yuan",
+          "romanization_guess": true,
+          "party": "IND",
+          "endorsed_by": [],
+          "ballot_no": null,
+          "incumbent": false,
+          "photo": "assets/photos/09007-02.jpg",
+          "note": "Former Land Administration Bureau director; registered 9/2."
+        }
+      ]
+    }
+  ]
+}
