@@ -63,6 +63,26 @@ struct NewsView {
   std::vector<store::ClassifiedArticle> latest;
 };
 
+// Secondary (non-map) chart views. The map is the primary view.
+enum class ChartKind { kMap = 0, kTrend, kSeats, kMargins, kParties, kGrid, kCount };
+const char* ChartKey(ChartKind k);  // i18n key, e.g. "chart.trend"
+
+// Per-race vote history (county level), sampled as results arrive.
+struct RaceHistory {
+  std::vector<float> minutes;                // minutes after 16:00
+  std::vector<std::vector<int64_t>> votes;   // per sample, per candidate
+  std::vector<float> progress;               // units counted / total
+};
+using ChartHistory = std::unordered_map<std::string, RaceHistory>;
+
+// What a click on the overlay hit.
+struct DashboardHit {
+  enum class Kind { kNone, kChartTab, kRace, kPip, kPipClose };
+  Kind kind = Kind::kNone;
+  ChartKind chart = ChartKind::kMap;
+  const election::Race* race = nullptr;
+};
+
 struct DashboardModel {
   int width = 0, height = 0;
   const election::ElectionData* data = nullptr;
@@ -97,6 +117,11 @@ struct DashboardModel {
   const NewsView* news = nullptr;
   bool show_news = false;  // left column shows the news panel
   int pinned = -1;         // pinned home region
+
+  ChartKind chart = ChartKind::kMap;       // active view
+  const ChartHistory* history = nullptr;   // for the trend chart
+  const election::Race* chart_race = nullptr;  // race shown by the trend chart
+  bool pip = true;                         // picture-in-picture "latest" window
 };
 
 // Screen-space rectangles the app must not treat as map (mouse capture).
@@ -123,6 +148,11 @@ class Dashboard {
   void PushNews(const store::ClassifiedArticle& article, const DashboardModel& m);
   // Pre-fills the inflow chart (votes per 5-minute bucket after 16:00).
   void SeedInflow(std::vector<int64_t> buckets) { inflow_ = std::move(buckets); }
+  // What is under the cursor on the overlay (tabs, chart rows, PiP), from
+  // the last rendered frame.
+  DashboardHit HitTest(float x, float y) const;
+  // True when (x, y) is on UI (a chart view or the PiP), not on the map.
+  bool Captures(float x, float y) const;
   // Short status message ("Pinned as home") shown for a moment.
   void Notify(std::string text) {
     notice_ = std::move(text);
@@ -178,6 +208,25 @@ class Dashboard {
   void DrawNewsCounts(SkCanvas* c, const DashboardModel& m, const std::string& candidate_id,
                       float x, float y);
   void DrawNotice(SkCanvas* c, const DashboardModel& m);
+
+  // Secondary charts (charts.cc).
+  SkRect ChartArea(const DashboardModel& m) const;
+  void DrawChartTabs(SkCanvas* c, const DashboardModel& m);
+  void DrawChartView(SkCanvas* c, const DashboardModel& m);
+  void DrawTrendChart(SkCanvas* c, const DashboardModel& m, SkRect area);
+  void DrawSeatArc(SkCanvas* c, const DashboardModel& m, SkRect area);
+  void DrawMargins(SkCanvas* c, const DashboardModel& m, SkRect area);
+  void DrawParties(SkCanvas* c, const DashboardModel& m, SkRect area);
+  void DrawRaceGrid(SkCanvas* c, const DashboardModel& m, SkRect area);
+  void DrawPip(SkCanvas* c, const DashboardModel& m);
+  void AddHit(const SkRect& r, DashboardHit hit) { hits_.push_back({r, hit}); }
+
+  struct PipItem {
+    bool is_news = false;
+    election::ElectionEvent event;
+    store::ClassifiedArticle news;
+    bool breaking = false;
+  };
   void DrawStamp(SkCanvas* c, float cx, float cy, float size, float age);
   // Event sentence in the current language ("A overtakes B", ...).
   std::string EventText(const election::ElectionEvent& e, const DashboardModel& m) const;
@@ -209,6 +258,22 @@ class Dashboard {
   float dt_ = 0;
   std::string notice_;
   float notice_age_ = 1e9f;
+
+  // Chart / PiP animation state.
+  ChartKind shown_chart_ = ChartKind::kMap;  // chart being drawn (fades out on close)
+  float chart_t_ = 0;                        // 0 = map, 1 = chart fully shown
+  float chart_age_ = 0;                      // seconds since the chart opened
+  std::unordered_map<std::string, float> anim_;  // generic animated values
+  std::unordered_map<std::string, uint32_t> seat_color_;
+  std::vector<std::pair<SkRect, DashboardHit>> hits_;
+  std::deque<PipItem> pip_queue_;   // pending (breaking first)
+  std::deque<PipItem> pip_recent_;  // rotation when idle
+  PipItem pip_current_, pip_previous_;
+  bool pip_has_current_ = false;
+  float pip_age_ = 0;   // time on current item
+  float pip_swap_ = 1;  // 0..1 transition from previous to current
+  SkRect pip_rect_ = SkRect::MakeEmpty();
+  SkRect last_chart_area_ = SkRect::MakeEmpty();
 
   Fonts* fonts_;
   Avatars* avatars_;

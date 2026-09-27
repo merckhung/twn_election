@@ -42,7 +42,91 @@ bool App::ProjectRegion(int region, float* x, float* y) const {
   return true;
 }
 
+void App::SampleHistory(const election::ResultsView& view, double minute) {
+  if (minute < 0) return;
+  auto& results = const_cast<election::ResultsView&>(view);
+  for (const election::Race& race : data_.races()) {
+    const int county = tree_.FindByCode(race.county_code);
+    if (county < 0) continue;
+    const election::Tally& t = results.RaceTally(race, county);
+    ui::RaceHistory& h = history_[race.id];
+    // Rewound: drop samples from the "future".
+    while (!h.minutes.empty() && h.minutes.back() > minute + 1e-3) {
+      h.minutes.pop_back();
+      h.votes.pop_back();
+      h.progress.pop_back();
+    }
+    if (!h.minutes.empty() && minute - h.minutes.back() < 0.99) {
+      h.votes.back() = t.votes;  // same minute: refresh
+      h.progress.back() = static_cast<float>(t.Progress());
+      continue;
+    }
+    h.minutes.push_back(static_cast<float>(minute));
+    h.votes.push_back(t.votes);
+    h.progress.push_back(static_cast<float>(t.Progress()));
+  }
+}
+
+void App::SetChart(ui::ChartKind kind) {
+  chart_ = kind;
+  if (kind == ui::ChartKind::kTrend) {
+    // Trend: the focused county's race, else the closest race on the board.
+    if (const election::Race* r = data_.RaceForCounty(tree_.region(focus_).county_code)) {
+      chart_race_ = r;
+    } else if (!chart_race_) {
+      double best = 2;
+      for (const election::Race& race : data_.races()) {
+        const election::Tally& t = results_->RaceTally(race, tree_.FindByCode(race.county_code));
+        if (t.TotalVotes() <= 0) continue;
+        const auto rank = t.Ranking();
+        const double margin = rank.size() > 1 ? t.Share(rank[0]) - t.Share(rank[1]) : 1;
+        if (margin < best) best = margin, chart_race_ = &race;
+      }
+      if (!chart_race_) chart_race_ = &data_.races().front();
+    }
+  }
+}
+
+void App::CycleChartRace(int step) {
+  const auto& races = data_.races();
+  int i = 0;
+  for (size_t k = 0; k < races.size(); ++k) {
+    if (&races[k] == chart_race_) i = static_cast<int>(k);
+  }
+  i = (i + step + static_cast<int>(races.size())) % static_cast<int>(races.size());
+  chart_race_ = &races[i];
+}
+
+bool App::HandleOverlayClick() {
+  const ui::DashboardHit hit = dashboard_->HitTest(mouse_.x, mouse_.y);
+  using Kind = ui::DashboardHit::Kind;
+  switch (hit.kind) {
+    case Kind::kChartTab:
+      SetChart(hit.chart);
+      return true;
+    case Kind::kPipClose:
+      pip_ = false;
+      return true;
+    case Kind::kRace:
+    case Kind::kPip:
+      if (hit.race) {
+        const int county = tree_.FindByCode(hit.race->county_code);
+        if (hit.kind == Kind::kRace && chart_ == ui::ChartKind::kTrend) {
+          chart_race_ = hit.race;
+        } else if (county >= 0) {
+          SetChart(ui::ChartKind::kMap);  // back to the primary view, on that race
+          SetFocus(county, true);
+        }
+      }
+      return true;
+    default:
+      return dashboard_->Captures(mouse_.x, mouse_.y);
+  }
+}
+
 void App::OnResults(double now) {
+  SampleHistory(*results_, sim_ ? sim_->clock_minutes()
+                                : election::MinutesAfterClose(snapshot_->updated_at));
   const election::EventBatch batch = tracker_.Update(*results_, data_.races());
   RebuildRaceStatus(0);
   if (batch.baseline) return;

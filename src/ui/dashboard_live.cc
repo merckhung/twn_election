@@ -103,6 +103,7 @@ const RaceStatus* Dashboard::StatusOf(const DashboardModel& m, const election::R
 }
 
 void Dashboard::ResetLive() {
+  pip_queue_.clear();
   toasts_.clear();
   pending_toasts_.clear();
   feed_.clear();
@@ -136,6 +137,20 @@ void Dashboard::PushBatch(const election::EventBatch& batch, double clock_minute
     flash_["row:" + e.race->id] = 1.f;
     // Early lead changes on a handful of ballots are noise: feed only.
     const bool early_noise = e.type == EventType::kLeadChange && e.progress < 0.08;
+    if (e.type != EventType::kFirstReturns && !early_noise) {
+      PipItem item;
+      item.event = e;
+      item.breaking = election::IsBreaking(e.type);
+      if (item.breaking) {
+        // Breaking items jump ahead of routine ones.
+        auto pos = std::find_if(pip_queue_.begin(), pip_queue_.end(),
+                                [](const PipItem& p) { return !p.breaking; });
+        pip_queue_.insert(pos, item);
+      } else {
+        pip_queue_.push_back(item);
+      }
+      while (pip_queue_.size() > 12) pip_queue_.pop_back();
+    }
     if (election::IsBreaking(e.type) && !early_noise) pending_toasts_.push_back(e);
 
     // Call-out anchored on the race's county (nation view) or on the view
@@ -184,6 +199,16 @@ void Dashboard::PushBatch(const election::EventBatch& batch, double clock_minute
 
 void Dashboard::PushNews(const store::ClassifiedArticle& article, const DashboardModel& m) {
   for (const store::Assessment& a : article.assessments) flash_["news:" + a.candidate_id] = 1.f;
+  if (article.model != "event-rule" && !article.assessments.empty()) {
+    PipItem item;
+    item.is_news = true;
+    item.news = article;
+    const election::Race* race = nullptr;
+    m.data->CandidateById(article.assessments.front().candidate_id, &race);
+    item.event.race = race;
+    pip_queue_.push_back(item);
+    while (pip_queue_.size() > 12) pip_queue_.pop_back();
+  }
   // Event-derived items already have their own banner/call-out; ordinary
   // news gets at most one call-out per ~1.5 s and yields to live events.
   if (article.model == "event-rule" || news_budget_ < 1 || callouts_.size() >= 3) return;
@@ -221,7 +246,9 @@ void Dashboard::UpdateLive(const DashboardModel& m) {
   for (auto& [k, v] : flash_) v = std::max(0.f, v - dt_ * 0.7f);
   for (Toast& t : toasts_) t.age += dt_;
   while (!toasts_.empty() && toasts_.front().age > 5.5f) toasts_.pop_front();
-  while (toasts_.size() < 2 && !pending_toasts_.empty()) {
+  // With a chart open, one banner at a time keeps the chart title visible.
+  const size_t max_toasts = m.chart == ChartKind::kMap ? 2 : 1;
+  while (toasts_.size() < max_toasts && !pending_toasts_.empty()) {
     // Collapse bursts: never queue more than 6 banners.
     while (pending_toasts_.size() > 6) pending_toasts_.pop_front();
     if (!toasts_.empty() && toasts_.back().age < 1.2f) break;  // stagger

@@ -68,61 +68,6 @@ std::string Percent(double v, int decimals = 1) {
   return buf;
 }
 
-// Splits UTF-8 text into lines no wider than `width`. CJK characters may
-// break anywhere; runs of Latin letters/digits break at spaces.
-std::vector<std::string> Wrap(const SkFont& font, const std::string& text, float width) {
-  std::vector<std::string> tokens;
-  for (size_t i = 0; i < text.size();) {
-    const unsigned char c = text[i];
-    if (c < 0x80 && c != ' ') {
-      size_t j = i;
-      while (j < text.size() && static_cast<unsigned char>(text[j]) < 0x80 && text[j] != ' ') ++j;
-      tokens.push_back(text.substr(i, j - i));
-      i = j;
-    } else {
-      const size_t n = c < 0x80 ? 1 : (c >> 5) == 0x6 ? 2 : (c >> 4) == 0xE ? 3 : 4;
-      tokens.push_back(text.substr(i, n));
-      i += n;
-    }
-  }
-  std::vector<std::string> lines;
-  std::string line;
-  for (const std::string& tok : tokens) {
-    if (!line.empty() && TextWidth(font, line + tok) > width) {
-      while (!line.empty() && line.back() == ' ') line.pop_back();
-      lines.push_back(line);
-      line.clear();
-      if (tok == " ") continue;
-    }
-    line += tok;
-  }
-  if (!line.empty()) lines.push_back(line);
-  return lines;
-}
-
-float ChipWidth(const Fonts* fonts, const std::string& text, float h) {
-  return TextWidth(fonts->Bold(h * 0.62f), text) + h * 0.8f;
-}
-
-// Draws a small rounded "chip" with text; returns its width.
-float Chip(SkCanvas* c, const Fonts* fonts, const std::string& text, float x, float y, float h,
-           uint32_t color, float s, bool outline = false) {
-  const SkFont f = fonts->Bold(h * 0.62f);
-  const float w = TextWidth(f, text) + h * 0.8f;
-  const SkRect r = SkRect::MakeXYWH(x, y, w, h);
-  if (outline) {
-    SkPaint p = Fill(color);
-    p.setStyle(SkPaint::kStroke_Style);
-    p.setStrokeWidth(1.2f * s);
-    c->drawRRect(SkRRect::MakeRectXY(r.makeInset(0.6f * s, 0.6f * s), h / 2, h / 2), p);
-    DrawText(c, text, x + w / 2, y + h * 0.71f, f, color, Align::kCenter);
-  } else {
-    c->drawRRect(SkRRect::MakeRectXY(r, h / 2, h / 2), Fill(color));
-    const SkColor tc = Luminance(color) > 0.6f ? SK_ColorBLACK : SK_ColorWHITE;
-    DrawText(c, text, x + w / 2, y + h * 0.71f, f, tc, Align::kCenter);
-  }
-  return w;
-}
 
 struct Countdown {
   int days = 0;
@@ -243,10 +188,12 @@ void Dashboard::Render(const DashboardModel& m, uint8_t* pixels) {
   s_ = layout.scale;
 
   UpdateLive(m);
+  hits_.clear();
   DrawInsets(c, m);
   DrawRings(c, m);
   DrawLabels(c, m);
   DrawCallouts(c, m);
+  DrawChartView(c, m);  // secondary views slide over the map
   DrawHeader(c, m);
   DrawLeftColumn(c, m);
   const float margin = 16 * s_;
@@ -258,11 +205,13 @@ void Dashboard::Render(const DashboardModel& m, uint8_t* pixels) {
     DrawRacePanel(c, m, panel);
   }
   DrawTimeline(c, m);
+  DrawChartTabs(c, m);
+  DrawPip(c, m);
   DrawFooter(c, m);
   DrawToasts(c, m);
   DrawFloaters(c);
   DrawNotice(c, m);
-  DrawTooltip(c, m);
+  if (chart_t_ < 0.3f) DrawTooltip(c, m);
   if (m.show_help) DrawHelp(c, m);
 }
 
@@ -411,7 +360,7 @@ void Dashboard::DrawLeftColumn(SkCanvas* c, const DashboardModel& m) {
   if (!info.referendums.empty()) {
     const auto& ref = info.referendums[0];
     const SkFont qf = fonts_->Regular(13.5f * s_);
-    const std::vector<std::string> lines = Wrap(qf, L_.Question(ref), w - 2 * pad);
+    const std::vector<std::string> lines = WrapText(qf, L_.Question(ref), w - 2 * pad);
     const float h = pad * 2 + 24 * s_ + lines.size() * 19 * s_ + 70 * s_;
     Panel(c, SkRect::MakeXYWH(x, y, w, h), 12 * s_);
     float ty = y + pad + 16 * s_;

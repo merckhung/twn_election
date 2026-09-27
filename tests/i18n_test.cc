@@ -28,8 +28,11 @@ TEST(I18n, ParsesLanguageFlags) {
 }
 
 TEST(I18n, EveryKeyTranslatedInAllLanguages) {
-  const char* keys[] = {"app.title", "status.countdown", "race.title", "nation.title",
-                        "footer.controls", "help.9", "ref.threshold", "level.village"};
+  const char* keys[] = {"app.title",     "status.countdown", "race.title",   "nation.title",
+                        "footer.controls", "help.9",         "ref.threshold", "level.village",
+                        "chart.trend",   "chart.seats",      "chart.margins", "chart.parties",
+                        "chart.grid",    "trend.title",      "seats.title",   "pip.title",
+                        "ev.lead_change.text", "ev.victory.text", "news.totals"};
   for (const char* k : keys) {
     std::set<std::string> distinct;
     for (Lang l : {Lang::kZhTW, Lang::kJa, Lang::kEn}) {

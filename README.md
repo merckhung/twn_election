@@ -20,9 +20,25 @@ C++20 and built with **Bazel (bzlmod only)**. 3D rendering uses **Vulkan**, and 
 | ![Night, nation view](docs/screenshots/09_night_nation.png) | ![Projections and concessions](docs/screenshots/10_night_projections.png) |
 | ![Close race with news panel](docs/screenshots/11_close_race_news.png) | ![Japanese UI](docs/screenshots/12_night_ja.png) |
 
-Demo video (56 s, headless render): [docs/demo/election_night_demo.mp4](docs/demo/election_night_demo.mp4).
-It shows the whole 16:00–23:00 night at ×1024, then a close race at ×128 with mock news
-classified through the mock LLM server, then the Japanese UI.
+### Charts
+
+| | |
+|---|---|
+| ![Vote trend](docs/screenshots/13_chart_trend.png) | ![Seat arc](docs/screenshots/14_chart_seats.png) |
+| ![Margins](docs/screenshots/15_chart_margins.png) | ![Race grid](docs/screenshots/17_chart_grid.png) |
+
+Demo clips (headless renders, 1280×720) are in [docs/demo/](docs/demo/):
+
+| Clip | Contents |
+|---|---|
+| [election_night_demo.mp4](docs/demo/election_night_demo.mp4) | All clips below back to back (~82 s) |
+| [01_whole_night_x1024.mp4](docs/demo/01_whole_night_x1024.mp4) | The whole 16:00–23:00 night at ×1024 |
+| [02_close_race_news_x128.mp4](docs/demo/02_close_race_news_x128.mp4) | Taoyuan's close race at ×128, with mock news classified by the mock LLM server |
+| [03_japanese_ui.mp4](docs/demo/03_japanese_ui.mp4) | Japanese UI |
+| [04_charts_and_pip_tour.mp4](docs/demo/04_charts_and_pip_tour.mp4) | Map → the five charts → map, with the PiP window |
+
+Regenerate with `--record=DIR --record_seconds=S --fps=F` (plus `--chart_tour=4` for the
+tour), then ffmpeg.
 
 > The coloured "counting" screenshots use the built-in **simulation**
 > (`--simulate`). Its numbers are synthetic, random and party-blind. They are
@@ -150,6 +166,10 @@ which takes a few minutes. Later builds are incremental.
 | `Space` | Pause / resume the simulation |
 | `,` `.` | Simulation speed ×½ / ×2 (×1 real time … ×4096) |
 | `[` `]` | Rewind / skip 30 simulated minutes |
+| `F2`–`F6` | Charts: trend · seat arc · margins · party votes · race grid (same key toggles back) |
+| `G` / `M` | Cycle through the views / back to the map |
+| `I` | Picture-in-picture "latest" window |
+| `←` `→` | (trend chart) previous / next race |
 | `N` | News sentiment panel |
 | `P` | Pin the current region as the start ("home") region; `P` again unpins |
 | `Home` | Go to the pinned region (or Taiwan) · `H` help overlay |
@@ -194,6 +214,31 @@ about 6½ minutes for the whole evening.
 | Projected winner | Banner; a red **當選** seal slams onto the card; gold ripples and a persistent beacon over the county |
 | New classified article | Callout with ▲ (good) / ▼ (bad) in green or red; the card's news counts flash; a soft ripple on the county |
 | Timeline | 16:00–23:00 track with a playhead, speed indicator, a votes-per-5-minutes histogram, and coloured markers for every event |
+
+## Charts (secondary views) and picture-in-picture
+
+The 3D map is the primary view. Five chart views can be opened on top of it with a
+hotkey or by clicking the tab bar under the map. **M**, Esc or the 地圖 tab returns to
+the map, and pressing the same F-key again toggles back. **G** cycles through all views.
+The map keeps animating, dimmed, behind the chart.
+
+| Key | Chart | Shows | Animation |
+|---|---|---|---|
+| F2 | **得票走勢** Vote trend | Vote share over 16:00–23:00 for the top candidates of one race, with lead-change markers (逆轉), the projection point (當選確定) and counting progress as a shaded area. `←`/`→` switch race | Lines draw left to right on open, the live end extends smoothly as new data arrives, the y-axis rescales smoothly, and end labels roll |
+| F3 | **席次半圓** Seat arc | 22 seats in a hemicycle grouped by party: projected seats solid with ✓, leading seats translucent, the majority line at 12, and party totals | Seats drop in one by one, cross-fade and pop with a gold flash when they change hands, and totals roll |
+| F4 | **差距排行** Margins | Every race sorted by margin (leader − runner-up, in points), closest first, coloured by the leader, with counting progress and 當選 stamps | Bar-chart race: rows slide to their new ranks, bars grow, and very close races pulse |
+| F5 | **政黨得票** Party votes | Nationwide votes by party across all 22 races, with share and seats won/ahead | Bar race with rolling numbers and a shine on growing bars |
+| F6 | **開票總覽** Race grid | 22 mini dashboards: progress ring, top two with shares, and declared/projected status | Tiles pop in, rings sweep, tiles flash on events, and the 當選 seal replaces the ring |
+
+Clicking a race (a margin row, a grid tile or a seat) returns to the map, drilled into
+that county. In the trend chart, a click switches the race instead.
+
+**Picture-in-picture (最新快訊).**
+- A small live window shows the most current affair: breaking events with live mini-bars
+  for the race, and newly classified news with ▲/▼ chips per candidate.
+- Items rotate every 6.5 s with a slide transition, and new breaking items jump the queue.
+- It sits in the bottom-right corner of the map and moves to the bottom-left while a chart is open.
+- **I** toggles it, the × closes it, and clicking it opens that race on the map.
 
 ## News sentiment (LLM)
 
@@ -310,7 +355,8 @@ src/store/              SQLite store (settings, results history, events, news, a
 src/render/             dlopen Vulkan loader, device/swapchain/offscreen context, renderer
                         (ground, map prisms + outlines, instanced bars, overlay), GLSL shaders
 src/ui/                 Skia dashboard + live layer (banners, call-outs, feed, timeline,
-                        rolling numbers, stamps), i18n (zh-TW/ja/en), fonts, avatars
+                        rolling numbers, stamps), secondary charts + PiP (charts.cc),
+                        i18n (zh-TW/ja/en), fonts, avatars
 src/app/                orbit camera, application (navigation, animation, input, map effects,
                         pinned home), election-night glue (live.cc), main
 tests/                  googletest: geo, election, night (simulation/events), news/store,
