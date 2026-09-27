@@ -3,6 +3,7 @@
 
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include "include/core/SkCanvas.h"
 #include "include/core/SkFont.h"
@@ -41,6 +42,15 @@ float DrawText(SkCanvas* c, std::string_view text, float x, float y, const SkFon
 
 // Returns `text` shortened with "…" to fit `max_width`.
 std::string Ellipsize(const SkFont& font, std::string_view text, float max_width);
+
+// Splits UTF-8 text into lines no wider than `width` (CJK breaks anywhere,
+// Latin at spaces).
+std::vector<std::string> WrapText(const SkFont& font, const std::string& text, float width);
+
+// Rounded "chip" label; returns its width. `s` is the UI scale.
+float ChipWidth(const Fonts* fonts, const std::string& text, float h);
+float Chip(SkCanvas* c, const Fonts* fonts, const std::string& text, float x, float y, float h,
+           uint32_t color, float s, bool outline = false);
 
 // Formats 1234567 as "1,234,567".
 std::string FormatThousands(int64_t v);

@@ -41,7 +41,10 @@ void Usage() {
       "  --font_dir=DIR      directory scanned for CJK fonts (default /usr/share/fonts)\n"
       "  --validation        enable VK_LAYER_KHRONOS_validation\n"
       "  --help_overlay      start with the controls overlay visible\n"
-      "  --show_news         start with the news panel open (key N)\n");
+      "  --show_news         start with the news panel open (key N)\n"
+      "  --chart=NAME        start in a secondary chart: trend|seats|margins|parties|grid\n"
+      "  --pip=0             hide the picture-in-picture latest-news window (key I)\n"
+      "  --chart_tour=S      headless recording: cycle map and charts every S seconds\n");
 }
 
 bool Flag(const char* arg, const char* name, std::string* value) {
@@ -111,6 +114,19 @@ int main(int argc, char** argv) {
     else if (Flag(a, "--validation", &v)) o.validation = v != "0";
     else if (Flag(a, "--help_overlay", &v)) o.help = true;
     else if (Flag(a, "--show_news", &v)) o.show_news = true;
+    else if (Flag(a, "--pip", &v)) o.pip = v != "0" && v != "false";
+    else if (Flag(a, "--chart_tour", &v)) o.chart_tour = std::atof(v.c_str());
+    else if (Flag(a, "--chart", &v)) {
+      const char* names[] = {"map", "trend", "seats", "margins", "parties", "grid"};
+      o.chart = -1;
+      for (int k = 0; k < 6; ++k) {
+        if (v == names[k]) o.chart = k;
+      }
+      if (o.chart < 0) {
+        std::fprintf(stderr, "--chart: map|trend|seats|margins|parties|grid\n");
+        return 2;
+      }
+    }
     else if (std::strcmp(a, "--help") == 0 || std::strcmp(a, "-h") == 0) {
       Usage();
       return 0;

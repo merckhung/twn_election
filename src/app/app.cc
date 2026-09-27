@@ -44,6 +44,11 @@ int App::Run(const AppOptions& options) {
     const float dt = static_cast<float>(1.0 / opt_.record_fps);
     for (int i = 0; i < frames; ++i) {
       const double now = i * dt;
+      if (opt_.chart_tour > 0) {
+        // Map -> trend -> seats -> margins -> parties -> grid -> map ...
+        const int step = static_cast<int>(now / opt_.chart_tour) % static_cast<int>(ui::ChartKind::kCount);
+        if (static_cast<int>(chart_) != step) SetChart(static_cast<ui::ChartKind>(step));
+      }
       Tick(now, dt);
       RenderFrame(now);
       char name[64];
@@ -207,7 +212,15 @@ bool App::Init(std::string* error) {
   SetFocus(start, /*animate=*/false);
   if (sim_ && sim_->clock_minutes() > 0) {
     dashboard_->SeedInflow(sim_->InflowHistory(5, sim_->clock_minutes()));
+    // Back-fill the trend history in 5-minute steps up to the start time.
+    for (double minute = 10; minute < sim_->clock_minutes(); minute += 5) {
+      election::ResultsView view(&data_, &tree_, sim_->SnapshotAtClock(minute));
+      SampleHistory(view, minute);
+    }
   }
+  pip_ = opt_.pip;
+  SetChart(static_cast<ui::ChartKind>(
+      std::clamp(opt_.chart, 0, static_cast<int>(ui::ChartKind::kCount) - 1)));
   if (!opt_.hover.empty()) hover_ = tree_.FindByCode(opt_.hover);
 
   std::printf(
@@ -316,6 +329,10 @@ int App::PickRegion(glm::vec2 screen) const {
 
 void App::UpdateHover() {
   if (opt_.headless) return;
+  if (chart_ != ui::ChartKind::kMap || dashboard_->Captures(mouse_.x, mouse_.y)) {
+    hover_ = -1;
+    return;
+  }
   hover_ = drag_button_ >= 0 && dragged_ ? hover_ : PickRegion(mouse_);
 }
 
@@ -334,7 +351,7 @@ void App::Tick(double now, float dt) {
   }
 
   // Keyboard navigation.
-  if (!opt_.headless) {
+  if (!opt_.headless && chart_ == ui::ChartKind::kMap) {
     glm::vec2 pan(0.f);
     if (keys_[GLFW_KEY_A] || keys_[GLFW_KEY_LEFT]) pan.x -= 1;
     if (keys_[GLFW_KEY_D] || keys_[GLFW_KEY_RIGHT]) pan.x += 1;
@@ -424,6 +441,10 @@ void App::BuildFrame(render::FrameInput* in, ui::DashboardModel* m) {
   m->news = &news_view_;
   m->show_news = show_news_;
   m->pinned = pinned_;
+  m->chart = chart_;
+  m->history = &history_;
+  m->chart_race = chart_race_;
+  m->pip = pip_;
   if (opt_.headless && hover_ >= 0) {
     // Place the synthetic cursor at the hovered region's label.
     const geo::Region& h = tree_.region(hover_);
@@ -630,6 +651,8 @@ void App::OnMouseButton(int button, int action, int) {
   if (action != GLFW_RELEASE || button != drag_button_) return;
   drag_button_ = -1;
   if (dragged_) return;
+  if (button == GLFW_MOUSE_BUTTON_LEFT && HandleOverlayClick()) return;
+  if (chart_ != ui::ChartKind::kMap && dashboard_->Captures(mouse_.x, mouse_.y)) return;
   if (button == GLFW_MOUSE_BUTTON_LEFT) {
     const int hit = PickRegion(mouse_);
     if (hit >= 0 && hit != focus_) SetFocus(hit, true);
@@ -650,6 +673,7 @@ void App::OnCursor(double x, double y) {
   if (drag_button_ < 0) return;
   if (glm::length(mouse_ - press_pos_) > 4.f) dragged_ = true;
   if (!dragged_) return;
+  if (dashboard_->Captures(press_pos_.x, press_pos_.y)) return;  // drags on charts/PiP
   if (drag_button_ == GLFW_MOUSE_BUTTON_LEFT) {
     camera_.PanScreen(prev, mouse_);
   } else {
@@ -659,6 +683,7 @@ void App::OnCursor(double x, double y) {
 }
 
 void App::OnScroll(double, double dy) {
+  if (dashboard_->Captures(mouse_.x, mouse_.y)) return;
   if (mouse_.x >= ui::Dashboard::Layout(renderer_.extent().width, renderer_.extent().height).panel_x) {
     return;
   }
@@ -671,7 +696,34 @@ void App::OnKey(int key, int action, int) {
   switch (key) {
     case GLFW_KEY_ESCAPE:
     case GLFW_KEY_BACKSPACE:
-      if (tree_.region(focus_).parent >= 0) SetFocus(tree_.region(focus_).parent, true);
+      if (chart_ != ui::ChartKind::kMap) {
+        SetChart(ui::ChartKind::kMap);  // secondary views return to the map first
+      } else if (tree_.region(focus_).parent >= 0) {
+        SetFocus(tree_.region(focus_).parent, true);
+      }
+      break;
+    case GLFW_KEY_M:
+      SetChart(ui::ChartKind::kMap);
+      break;
+    case GLFW_KEY_F2:
+    case GLFW_KEY_F3:
+    case GLFW_KEY_F4:
+    case GLFW_KEY_F5:
+    case GLFW_KEY_F6: {
+      const auto k = static_cast<ui::ChartKind>(key - GLFW_KEY_F2 + 1);
+      SetChart(chart_ == k ? ui::ChartKind::kMap : k);  // same key toggles back
+      break;
+    }
+    case GLFW_KEY_G:
+      SetChart(static_cast<ui::ChartKind>((static_cast<int>(chart_) + 1) %
+                                          static_cast<int>(ui::ChartKind::kCount)));
+      break;
+    case GLFW_KEY_I:
+      pip_ = !pip_;
+      break;
+    case GLFW_KEY_LEFT:
+    case GLFW_KEY_RIGHT:
+      if (chart_ == ui::ChartKind::kTrend) CycleChartRace(key == GLFW_KEY_RIGHT ? 1 : -1);
       break;
     case GLFW_KEY_1:
     case GLFW_KEY_2:

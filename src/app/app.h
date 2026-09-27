@@ -57,6 +57,9 @@ struct AppOptions {
   ui::Lang lang = ui::Lang::kZhTW;  // UI language; Traditional Chinese by default
   bool help = false;
   bool show_news = false;  // start with the news panel open
+  int chart = 0;           // ui::ChartKind to start in (0 = map)
+  bool pip = true;         // picture-in-picture "latest" window
+  double chart_tour = 0;   // headless recording: switch view every N seconds
   bool validation = false;
   std::string font_dir = "/usr/share/fonts";
   float yaw_deg = 0;
@@ -118,6 +121,10 @@ class App {
   void BuildEffects(render::FrameInput* in, ui::DashboardModel* m, float D);
   void RefreshNews(double now);
   void GenerateMockNews(double now);
+  void SampleHistory(const election::ResultsView& view, double minute);
+  void SetChart(ui::ChartKind kind);
+  void CycleChartRace(int step);
+  bool HandleOverlayClick();
   void TogglePin();
   void SeekSimulation(double minutes);
   std::vector<int> VisibleRegions() const;
@@ -174,6 +181,10 @@ class App {
   double next_news_refresh_ = 0;
   bool show_news_ = false;
   int pinned_ = -1;
+  ui::ChartKind chart_ = ui::ChartKind::kMap;
+  const election::Race* chart_race_ = nullptr;
+  bool pip_ = true;
+  ui::ChartHistory history_;
   std::unique_ptr<news::MockNewsGenerator> mock_news_;
   double mock_minute_ = -180;  // generated up to (minutes after 16:00)
   int64_t last_news_id_ = -1;
