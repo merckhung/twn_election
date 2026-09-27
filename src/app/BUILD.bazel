@@ -14,9 +14,14 @@ cc_library(
     srcs = [
         "app.cc",
         "live.cc",
+        "music.cc",
         "stb_impl.cc",
     ],
-    hdrs = ["app.h"],
+    hdrs = ["app.h", "music.h"],
+    linkopts = select({
+        "@platforms//os:linux": ["-lasound", "-pthread"],
+        "//conditions:default": [],
+    }),
     deps = [
         ":camera",
         "//src/election",

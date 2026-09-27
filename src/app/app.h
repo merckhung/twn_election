@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "src/app/camera.h"
+#include "src/app/music.h"
 #include "src/election/events.h"
 #include "src/election/model.h"
 #include "src/election/results.h"
@@ -33,6 +34,7 @@ struct AppOptions {
   std::string root = ".";  // directory containing data/ and assets/
   std::string results_path;  // results JSON to watch ("" = data/election/2026/results.json)
   bool simulate = false;
+  bool music = true;
   double sim_speed = 64;      // simulated seconds per real second (x1 .. x4096)
   double sim_clock = -1;      // >= 0: start at this many minutes after 16:00
   double sim_progress = -1;   // >= 0: start at this fraction of the evening
@@ -127,6 +129,7 @@ class App {
   bool HandleOverlayClick();
   void TogglePin();
   void SeekSimulation(double minutes);
+  void RestartSimulation();
   std::vector<int> VisibleRegions() const;
   bool ProjectRegion(int region, float* x, float* y) const;
 
@@ -143,6 +146,7 @@ class App {
   vk::VkContext ctx_;
   render::Renderer renderer_;
   Camera camera_;
+  AmbientMusic music_;
   ui::Fonts fonts_;
   std::unique_ptr<ui::Avatars> avatars_;
   std::unique_ptr<ui::Dashboard> dashboard_;

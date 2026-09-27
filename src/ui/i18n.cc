@@ -166,13 +166,15 @@ const std::unordered_map<std::string_view, Entry>& Table() {
        {"1 領先政黨 · 2 開票進度 · 3 投票率 · 4 公投", "1 リード政党 · 2 開票率 · 3 投票率 · 4 住民投票",
         "1 leading party · 2 progress · 3 turnout · 4 referendum"}},
       {"help.8",
-       {"Space 暫停 · , / . 模擬速度 ×½ / ×2 · [ / ] 倒轉/快轉 30 分 · P 釘選首頁",
-        "Space 一時停止 · , / . 速度 ×½ / ×2 · [ / ] 30分戻す/進める · P ホーム固定",
-        "Space pause · , / . speed ×½ / ×2 · [ / ] ∓30 min · P pin as home"}},
+       {"Space 暫停 · , / Page Down 減速 · . / Page Up 加速 · [ / ] 倒轉/快轉 30 分 · P 釘選首頁",
+        "Space 一時停止 · , / Page Down 減速 · . / Page Up 加速 · [ / ] 30分戻す/進める · P ホーム固定",
+        "Space pause · , / Page Down slower · . / Page Up faster · [ / ] ∓30 min · P pin as home"}},
       {"help.9",
-       {"L — 切換語言（繁中 / 日本語 / English）· Home — 回首頁區域 · N — 新聞 · H — 說明",
-        "L — 言語切替（繁中 / 日本語 / English）· Home — ホームへ · N — ニュース · H — 閉じる",
-        "L — language (繁中 / 日本語 / English) · Home — home region · N — news · H — close"}},
+       {"L — 切換語言（繁中 / 日本語 / English）· V — 背景音樂 · Home — 回首頁區域 · N — 新聞 · H — 說明",
+        "L — 言語切替（繁中 / 日本語 / English）· V — BGM · Home — ホームへ · N — ニュース · H — 閉じる",
+        "L — language (繁中 / 日本語 / English) · V — music · Home — home region · N — news · H — close"}},
+      {"help.10", {"F7 — 重新開始模擬開票", "F7 — シミュレーションを再スタート", "F7 — restart simulation"}},
+      {"simulation.restarted", {"模擬開票已重新開始", "シミュレーションを再スタート", "Simulation restarted"}},
   };
   return *table;
 }

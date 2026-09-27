@@ -470,4 +470,24 @@ void App::SeekSimulation(double minutes) {
   }
 }
 
+void App::RestartSimulation() {
+  if (!sim_) return;
+  sim_->SeekClock(0);
+  sim_->set_paused(false);
+  tracker_.Reset();
+  dashboard_->ResetLive();
+  dashboard_->SeedInflow({});
+  effects_.clear();
+  pulses_.clear();
+  shown_color_.clear();
+  bar_anim_.clear();
+  history_.clear();
+  race_status_.clear();
+  last_recorded_time_.clear();
+  mock_minute_ = -180;
+  last_news_id_ = -1;
+  db_.ClearSimulated();
+  dashboard_->Notify(ui::Tr(lang_, "simulation.restarted"));
+}
+
 }  // namespace twn::app
