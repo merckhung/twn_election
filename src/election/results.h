@@ -10,6 +10,9 @@
 //        "<region code>": { "votes": {"<candidate id>": 123, ...},
 //                           "eligible": 0, "ballots_cast": 0,
 //                           "units_counted": 0, "units_total": 0 } } } },
+//   "declarations": [   // campaign statements, independent of the count
+//     { "race": "63000-mayor", "candidate": "63000-05",
+//       "type": "victory" | "concede", "time": "2026-11-28T19:40:00+08:00" } ],
 //   "referendums": {
 //     "ref-22": { "regions": { "<region code>": { "agree": 0, "disagree": 0,
 //                  "eligible": 0, "ballots_cast": 0,
@@ -70,6 +73,17 @@ enum class ResultsStatus { kPreElection, kCounting, kFinal };
 
 const char* StatusLabelZh(ResultsStatus s);
 
+// A candidate declaring victory or conceding. Campaigns typically do this
+// from their HQ once their own projections look safe, i.e. before the count
+// is complete and long before the CEC's official announcement.
+struct Declaration {
+  enum class Type { kVictory, kConcede };
+  std::string race_id;
+  std::string candidate_id;
+  Type type = Type::kVictory;
+  std::string time;  // ISO-8601
+};
+
 struct ResultsSnapshot {
   ResultsStatus status = ResultsStatus::kPreElection;
   std::string source;
@@ -80,6 +94,7 @@ struct ResultsSnapshot {
   std::unordered_map<std::string, std::unordered_map<std::string, Tally>> races;
   // referendum id -> region code -> tally
   std::unordered_map<std::string, std::unordered_map<std::string, RefTally>> referendums;
+  std::vector<Declaration> declarations;
 };
 
 bool ParseResultsJson(std::string_view json, const ElectionData& data, ResultsSnapshot* out,

@@ -13,6 +13,7 @@ cc_library(
     name = "app_lib",
     srcs = [
         "app.cc",
+        "live.cc",
         "stb_impl.cc",
     ],
     hdrs = ["app.h"],
@@ -20,7 +21,9 @@ cc_library(
         ":camera",
         "//src/election",
         "//src/geo",
+        "//src/news",
         "//src/render",
+        "//src/store",
         "//src/ui",
         "@stb//:stb_image_write",
         "@system_glfw//:glfw",

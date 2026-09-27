@@ -1,4 +1,5 @@
-"""Module extension exposing host-installed GLFW 3 as @system_glfw//:glfw.
+"""Module extension exposing host-installed GLFW 3 (@system_glfw//:glfw) and
+libcurl (@system_curl//:curl).
 
 GLFW's BCR module builds X11/Wayland client libraries from source; using the
 distribution package (libglfw3-dev / brew install glfw) is lighter. The rule
@@ -46,7 +47,52 @@ system_glfw = repository_rule(
     local = True,
 )
 
+def _system_curl_impl(rctx):
+    libs = ["-lcurl"]
+    cflags = []
+    for tool in ["pkg-config", "curl-config"]:
+        path = rctx.which(tool)
+        if not path:
+            continue
+        args = [path, "--cflags", "--libs", "libcurl"] if tool == "pkg-config" else [path, "--cflags", "--libs"]
+        res = rctx.execute(args)
+        if res.return_code == 0:
+            flags = res.stdout.strip().replace("\n", " ").split(" ")
+            cflags = [f for f in flags if f.startswith("-I")]
+            libs = [f for f in flags if f.startswith("-l") or f.startswith("-L")]
+            break
+    candidates = [f[2:] for f in cflags] + ["/usr/include", "/usr/include/x86_64-linux-gnu",
+                                            "/usr/include/aarch64-linux-gnu", "/usr/local/include",
+                                            "/opt/homebrew/include", "/opt/homebrew/opt/curl/include"]
+    inc = None
+    for d in candidates:
+        if rctx.path(d + "/curl/curl.h").exists:
+            inc = d
+            break
+    if not inc:
+        fail("libcurl headers not found. Install libcurl4-openssl-dev (Debian/Ubuntu), " +
+             "libcurl-devel (Fedora) or `brew install curl`.")
+    rctx.symlink(inc + "/curl", "include/curl")
+    rctx.file("BUILD.bazel", """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "curl",
+    hdrs = glob(["include/curl/*.h"]),
+    includes = ["include"],
+    linkopts = {libs},
+    visibility = ["//visibility:public"],
+)
+""".format(libs = repr(libs)))
+
+system_curl = repository_rule(
+    implementation = _system_curl_impl,
+    environ = ["PKG_CONFIG_PATH"],
+    local = True,
+)
+
 def _system_libs_impl(module_ctx):
+    system_curl(name = "system_curl")
     system_glfw(name = "system_glfw")
     return module_ctx.extension_metadata(reproducible = False)
 

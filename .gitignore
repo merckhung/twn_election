@@ -3,3 +3,8 @@ user.bazelrc
 MODULE.bazel.lock
 /out/
 *.png.tmp
+*.db
+*.db-wal
+*.db-shm
+data/news/inbox/*.jsonl
+data/news/inbox/*.done

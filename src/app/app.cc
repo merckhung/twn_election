@@ -38,6 +38,21 @@ int App::Run(const AppOptions& options) {
     std::fprintf(stderr, "twn_election: %s\n", error.c_str());
     return 1;
   }
+  if (opt_.headless && !opt_.record_dir.empty()) {
+    // Frame sequence at a fixed rate (simulated time advances with it).
+    const int frames = static_cast<int>(opt_.record_seconds * opt_.record_fps);
+    const float dt = static_cast<float>(1.0 / opt_.record_fps);
+    for (int i = 0; i < frames; ++i) {
+      const double now = i * dt;
+      Tick(now, dt);
+      RenderFrame(now);
+      char name[64];
+      std::snprintf(name, sizeof name, "/frame_%05d.png", i);
+      if (SaveScreenshot(opt_.record_dir + name, /*quiet=*/true)) return 1;
+    }
+    std::printf("wrote %d frames to %s\n", frames, opt_.record_dir.c_str());
+    return 0;
+  }
   if (opt_.headless) {
     // Render a few frames so animations settle, then save.
     for (int i = 0; i < 3; ++i) {
@@ -81,8 +96,9 @@ bool App::Init(std::string* error) {
 
   if (opt_.simulate) {
     auto sim = std::make_unique<election::SimulatedResultsSource>(&data_, &tree_, opt_.seed,
-                                                                  opt_.sim_duration_s);
+                                                                  opt_.sim_speed);
     if (opt_.sim_progress >= 0) sim->SeekProgress(opt_.sim_progress);
+    if (opt_.sim_clock >= 0) sim->SeekClock(opt_.sim_clock);
     sim_ = sim.get();
     source_ = std::move(sim);
   } else {
@@ -93,6 +109,33 @@ bool App::Init(std::string* error) {
   }
   snapshot_ = std::make_shared<election::ResultsSnapshot>();
   results_ = std::make_unique<election::ResultsView>(&data_, &tree_, snapshot_);
+
+  // SQLite store: settings (pinned home region), results/event history, news.
+  const std::string db_path = opt_.db_path.empty() ? opt_.root + "/twn_election.db" : opt_.db_path;
+  std::string db_error;
+  if (!db_.Open(db_path, &db_error)) {
+    std::fprintf(stderr, "warning: database disabled: %s\n", db_error.c_str());
+  } else if (opt_.simulate) {
+    db_.ClearSimulated();  // each simulation run starts from a clean slate
+  }
+  if (opt_.news && db_.is_open()) {
+    news::NewsConfig nc;
+    nc.db_path = db_path;
+    nc.llm = opt_.llm;
+    nc.use_llm = !opt_.no_llm;
+    const std::string cfg =
+        opt_.news_config.empty() ? opt_.root + "/data/news/feeds.json" : opt_.news_config;
+    std::string news_error;
+    if (!news::LoadNewsConfig(cfg, data_, &nc, &news_error)) {
+      std::fprintf(stderr, "warning: %s (news feeds disabled)\n", news_error.c_str());
+    }
+    if (!nc.inbox_dir.empty() && nc.inbox_dir[0] != '/') nc.inbox_dir = opt_.root + "/" + nc.inbox_dir;
+    news_ = std::make_unique<news::NewsService>(std::move(nc), news::CandidateRefs(data_));
+    news_->Start();
+    if (opt_.mock_news || opt_.simulate) {
+      mock_news_ = std::make_unique<news::MockNewsGenerator>(&data_, opt_.seed);
+    }
+  }
 
   if (!fonts_.Load(opt_.font_dir, error)) return false;
   avatars_ = std::make_unique<ui::Avatars>(&fonts_, opt_.root);
@@ -146,9 +189,14 @@ bool App::Init(std::string* error) {
       std::clamp(opt_.mode, 0, static_cast<int>(ui::ColorMode::kCount) - 1));
   show_help_ = opt_.help;
   lang_ = opt_.lang;
+  show_news_ = opt_.show_news;
   LayerForChildren(0);
 
   int start = 0;
+  if (db_.is_open()) {
+    if (auto home = db_.GetSetting("home_region")) pinned_ = tree_.FindByCode(*home);
+    if (pinned_ >= 0) start = pinned_;
+  }
   if (!opt_.focus.empty()) {
     start = tree_.FindByCode(opt_.focus);
     if (start < 0) {
@@ -157,6 +205,9 @@ bool App::Init(std::string* error) {
     }
   }
   SetFocus(start, /*animate=*/false);
+  if (sim_ && sim_->clock_minutes() > 0) {
+    dashboard_->SeedInflow(sim_->InflowHistory(5, sim_->clock_minutes()));
+  }
   if (!opt_.hover.empty()) hover_ = tree_.FindByCode(opt_.hover);
 
   std::printf(
@@ -169,6 +220,8 @@ bool App::Init(std::string* error) {
 }
 
 void App::Shutdown() {
+  if (news_) news_->Stop();
+  news_.reset();
   if (ctx_.device()) {
     for (auto& [parent, layer] : layers_) renderer_.DestroyLayer(layer.gpu_layer);
     layers_.clear();
@@ -267,10 +320,15 @@ void App::UpdateHover() {
 }
 
 void App::Tick(double now, float dt) {
+  frame_dt_ = dt;
   if (auto snap = source_->Poll(now)) {
     snapshot_ = snap;
     results_ = std::make_unique<election::ResultsView>(&data_, &tree_, snapshot_);
+    OnResults(now);
   }
+  UpdateEffects(dt);
+  GenerateMockNews(now);
+  RefreshNews(now);
   if (auto* file = dynamic_cast<election::FileResultsSource*>(source_.get())) {
     source_error_ = file->last_error();
   }
@@ -319,6 +377,7 @@ void App::Tick(double now, float dt) {
           progress = results_->RaceTally(*race, r).Progress();
         }
         target = D * (0.025f + 0.05f * static_cast<float>(progress));
+        if (auto p = pulses_.find(r); p != pulses_.end()) target *= 1 + 0.45f * p->second;
         if (r == hover_) target *= 1.25f;
         if (r == focus_) target *= 1.5f;
       } else {
@@ -327,7 +386,8 @@ void App::Tick(double now, float dt) {
       float& h = heights_[r];
       h += (target - h) * k;
       float& hl = highlights_[r];
-      const float hl_target = r == hover_ ? 1.f : (r == focus_ ? 0.6f : 0.f);
+      float hl_target = r == hover_ ? 1.f : (r == focus_ ? 0.6f : 0.f);
+      if (auto p = pulses_.find(r); p != pulses_.end()) hl_target = std::max(hl_target, 0.9f * p->second);
       hl += (hl_target - hl) * std::min(1.f, k * 2);
     }
   }
@@ -352,6 +412,18 @@ void App::BuildFrame(render::FrameInput* in, ui::DashboardModel* m) {
   m->source = source_->Describe();
   m->source_error = source_error_;
   m->now = std::chrono::system_clock::now();
+  m->dt = frame_dt_;
+  m->project = [this](int region, float* x, float* y) { return ProjectRegion(region, x, y); };
+  m->visible_regions = VisibleRegions();
+  m->clock_minutes = election::MinutesAfterClose(snapshot_->updated_at);
+  if (sim_) m->clock_minutes = sim_->clock_minutes();
+  m->simulated = sim_ != nullptr;
+  m->sim_speed = sim_ ? sim_->speed() : 0;
+  m->sim_paused = sim_ && sim_->paused();
+  m->race_status = &race_status_;
+  m->news = &news_view_;
+  m->show_news = show_news_;
+  m->pinned = pinned_;
   if (opt_.headless && hover_ >= 0) {
     // Place the synthetic cursor at the hovered region's label.
     const geo::Region& h = tree_.region(hover_);
@@ -425,7 +497,13 @@ void App::BuildFrame(render::FrameInput* in, ui::DashboardModel* m) {
         color = ui::MixColor(0xFF101B28, color, 0.75f);  // a village is selected
       }
       render::RegionStyle& s = layer->styles[slot];
-      s.color = ToVec4(color, alpha);
+      // Cross-fade colour changes (e.g. a new leader) instead of snapping.
+      const glm::vec3 target_rgb = glm::vec3(ToVec4(color));
+      auto [cit, fresh] = shown_color_.try_emplace(r, target_rgb);
+      cit->second += (target_rgb - cit->second) * (1.f - std::exp(-frame_dt_ * 3.5f));
+      glm::vec3 rgb = cit->second;
+      if (auto p = pulses_.find(r); p != pulses_.end()) rgb = glm::mix(rgb, glm::vec3(1.f), 0.14f * p->second);
+      s.color = glm::vec4(rgb, alpha);
       s.params = glm::vec4(heights_[r], highlights_[r], 0.f, 0.f);
     }
     render::LayerDraw draw;
@@ -447,6 +525,7 @@ void App::BuildFrame(render::FrameInput* in, ui::DashboardModel* m) {
         m->labels.push_back({s.x, s.y + 5.f, r, reg.area_km2 + (r == hover_ ? 1e9f : 0.f)});
       }
       std::vector<std::pair<float, uint32_t>> bars;  // share, colour
+      std::vector<int64_t> bar_keys;
       if (referendum && !data_.info().referendums.empty()) {
         const auto& t = results_->ReferendumTally(data_.info().referendums[0].id, r);
         const int64_t total = t.agree + t.disagree;
@@ -459,9 +538,14 @@ void App::BuildFrame(render::FrameInput* in, ui::DashboardModel* m) {
           const election::Tally& t = results_->RaceTally(*race, r);
           if (t.TotalVotes() > 0) {
             const std::vector<int> rank = t.Ranking();
-            for (size_t k = 0; k < std::min<size_t>(3, rank.size()); ++k) {
-              bars.push_back({static_cast<float>(t.Share(rank[k])),
-                              data_.party(race->candidates[rank[k]].party).color});
+            // Top three in stable candidate order so bars grow/shrink in place
+            // when the ranking changes.
+            std::vector<int> top(rank.begin(), rank.begin() + std::min<size_t>(3, rank.size()));
+            std::sort(top.begin(), top.end());
+            for (int cand : top) {
+              bars.push_back({static_cast<float>(t.Share(cand)),
+                              data_.party(race->candidates[cand].party).color});
+              bar_keys.push_back(static_cast<int64_t>(r) * 64 + cand);
             }
           }
         }
@@ -476,7 +560,13 @@ void App::BuildFrame(render::FrameInput* in, ui::DashboardModel* m) {
         const float x = reg.label.x - total_w / 2 + w / 2 + k * (w + gap);
         b.base = glm::vec4(x, reg.label.y, h, w);
         b.color = ToVec4(bars[k].second);
-        b.size = glm::vec4(std::max(0.002f * D, bars[k].first * D * 0.11f), highlights_[r], w, 0.f);
+        float height = std::max(0.002f * D, bars[k].first * D * 0.11f);
+        if (k < bar_keys.size()) {
+          auto [bit, fresh] = bar_anim_.try_emplace(bar_keys[k], 0.f);
+          bit->second += (height - bit->second) * (1.f - std::exp(-frame_dt_ * 4.f));
+          height = bit->second;
+        }
+        b.size = glm::vec4(height, highlights_[r], w, 0.f);
         in->bars.push_back(b);
       }
     }
@@ -487,6 +577,7 @@ bool App::RenderFrame(double) {
   render::FrameInput in;
   ui::DashboardModel m;
   BuildFrame(&in, &m);
+  BuildEffects(&in, &m, ExtrudeScale());
   dashboard_->Render(m, overlay_.data());
   in.overlay = overlay_.data();
   in.overlay_version = ++overlay_version_;
@@ -494,7 +585,7 @@ bool App::RenderFrame(double) {
   return result == render::Renderer::FrameResult::kOk;
 }
 
-int App::SaveScreenshot(const std::string& path) {
+int App::SaveScreenshot(const std::string& path, bool quiet) {
   std::vector<uint8_t> rgba;
   if (!renderer_.ReadPixels(&rgba)) {
     std::fprintf(stderr, "screenshot readback failed\n");
@@ -507,7 +598,7 @@ int App::SaveScreenshot(const std::string& path) {
     std::fprintf(stderr, "cannot write %s\n", path.c_str());
     return 1;
   }
-  std::printf("wrote %s (%ux%u)\n", path.c_str(), e.width, e.height);
+  if (!quiet) std::printf("wrote %s (%ux%u)\n", path.c_str(), e.width, e.height);
   return 0;
 }
 
@@ -598,16 +689,28 @@ void App::OnKey(int key, int action, int) {
       show_help_ = !show_help_;
       break;
     case GLFW_KEY_HOME:
-      SetFocus(focus_, true);
+      SetFocus(pinned_ >= 0 ? pinned_ : 0, true);
+      break;
+    case GLFW_KEY_P:
+      TogglePin();
+      break;
+    case GLFW_KEY_N:
+      show_news_ = !show_news_;
       break;
     case GLFW_KEY_SPACE:
       if (sim_) sim_->set_paused(!sim_->paused());
       break;
+    case GLFW_KEY_COMMA:
+      if (sim_) sim_->SlowDown();
+      break;
+    case GLFW_KEY_PERIOD:
+      if (sim_) sim_->SpeedUp();
+      break;
     case GLFW_KEY_LEFT_BRACKET:
-      if (sim_) sim_->SeekProgress(sim_->progress() - 0.1);
+      if (sim_) SeekSimulation(sim_->clock_minutes() - 30);
       break;
     case GLFW_KEY_RIGHT_BRACKET:
-      if (sim_) sim_->SeekProgress(sim_->progress() + 0.1);
+      if (sim_) SeekSimulation(sim_->clock_minutes() + 30);
       break;
     default:
       break;

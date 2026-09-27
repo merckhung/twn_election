@@ -121,6 +121,19 @@ bool ParseResultsJson(std::string_view text, const ElectionData& data, ResultsSn
         }
       }
     }
+    out->declarations.clear();
+    for (const json& d : doc.value("declarations", json::array())) {
+      Declaration decl;
+      decl.race_id = d.value("race", "");
+      decl.candidate_id = d.value("candidate", "");
+      decl.type = d.value("type", "victory") == "concede" ? Declaration::Type::kConcede
+                                                          : Declaration::Type::kVictory;
+      decl.time = d.value("time", "");
+      const Race* race = data.RaceById(decl.race_id);
+      if (race && race->CandidateIndex(decl.candidate_id) >= 0) {
+        out->declarations.push_back(std::move(decl));
+      }
+    }
     if (doc.contains("referendums")) {
       for (const auto& [ref_id, ref_json] : doc["referendums"].items()) {
         auto& regions = out->referendums[ref_id];
@@ -186,6 +199,14 @@ std::string ResultsToJson(const ResultsSnapshot& snap, const ElectionData& data)
     refs[ref_id]["regions"] = rj;
   }
   doc["referendums"] = refs;
+  json decls = json::array();
+  for (const Declaration& d : snap.declarations) {
+    decls.push_back({{"race", d.race_id},
+                     {"candidate", d.candidate_id},
+                     {"type", d.type == Declaration::Type::kConcede ? "concede" : "victory"},
+                     {"time", d.time}});
+  }
+  doc["declarations"] = decls;
   return doc.dump(1);
 }
 

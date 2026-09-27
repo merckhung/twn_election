@@ -52,3 +52,26 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "night_test",
+    srcs = ["night_test.cc"],
+    data = ["//:data"],
+    deps = [
+        "//src/election",
+        "//src/geo",
+        "@googletest//:gtest_main",
+    ],
+)
+
+cc_test(
+    name = "news_test",
+    srcs = ["news_test.cc"],
+    data = ["//:data"],
+    deps = [
+        "//src/news",
+        "//src/store",
+        "@googletest//:gtest_main",
+        "@nlohmann_json//:json",
+    ],
+)

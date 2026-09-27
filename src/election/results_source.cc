@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
+#include <vector>
 
 namespace twn::election {
 namespace {
@@ -62,112 +63,280 @@ std::string FileResultsSource::Describe() const { return "file: " + path_; }
 
 SimulatedResultsSource::SimulatedResultsSource(const ElectionData* data,
                                                const geo::RegionTree* tree, uint64_t seed,
-                                               double duration_s)
-    : data_(data), tree_(tree), seed_(seed), duration_s_(std::max(1.0, duration_s)) {}
+                                               double speed)
+    : data_(data), tree_(tree), seed_(seed) {
+  set_speed(speed);
+  Build();
+}
 
-void SimulatedResultsSource::SeekProgress(double p) {
-  progress_ = std::clamp(p, 0.0, 1.0);
-  dirty_ = true;
+void SimulatedResultsSource::Build() {
+  village_units_.assign(tree_->size(), 0);
+  const auto& races = data_->races();
+  const double national_lean = Unit(Mix(seed_ ^ 0x5EED));
+  for (size_t ri = 0; ri < races.size(); ++ri) {
+    const Race& race = races[ri];
+    const int county = tree_->FindByCode(race.county_code);
+    if (county < 0) continue;
+    const size_t n = race.candidates.size();
+    const uint64_t rh = HashString(race.id, seed_);
+
+    // Party-blind random strengths; the two strongest are made close so the
+    // count is competitive.
+    std::vector<double> strength(n);
+    for (size_t i = 0; i < n; ++i) {
+      strength[i] = 0.04 + std::pow(Unit(HashString(race.candidates[i].id, seed_)), 2.4);
+    }
+    std::vector<int> order(n);
+    for (size_t i = 0; i < n; ++i) order[i] = static_cast<int>(i);
+    std::sort(order.begin(), order.end(), [&](int a, int b) { return strength[a] > strength[b]; });
+    const int front_a = order[0];
+    const int front_b = n > 1 ? order[1] : order[0];
+    // About a third of races are neck and neck; the rest are competitive.
+    const double tight = Unit(Mix(rh + 9));
+    strength[front_b] = strength[front_a] * (tight < 0.3 ? 0.985 + 0.02 * Unit(Mix(rh + 1))
+                                                         : 0.86 + 0.14 * Unit(Mix(rh + 1)));
+    // Correlation between reporting time and lean: > 0 means early stations
+    // favour B and late ones favour A (so A comes from behind).
+    const double u = Unit(Mix(rh + 2));
+    const double corr = u < 0.35 ? 0.0 : (u < 0.7 ? 1.0 : -1.0) * (0.35 + 0.5 * Unit(Mix(rh + 3)));
+
+    for (int town : tree_->region(county).children) {
+      const auto& villages = tree_->region(town).children;
+      const std::vector<int> units = villages.empty() ? std::vector<int>{town} : villages;
+      for (int v : units) {
+        const uint64_t vh = HashString(tree_->region(v).code, seed_);
+        // Village-level timing: when this neighbourhood's stations report.
+        // Kumaraswamy(1.6, 3.2): trickle from 16:15, peak ~18:00, tail to ~23:00.
+        const double k = std::pow(1.0 - std::pow(1.0 - Unit(Mix(vh + 1)), 1.0 / 3.2), 1.0 / 1.6);
+        const double lean = corr * (1.0 - 2.0 * k) + 0.35 * (Unit(Mix(vh + 2)) * 2 - 1);
+        const int count = 1 + static_cast<int>(Unit(Mix(vh + 3)) * 3.2);
+        village_units_[v] = count;
+        for (int s = 0; s < count; ++s) {
+          const uint64_t sh = Mix(vh + 101 * (s + 1));
+          Station st;
+          const double jitter = (Unit(Mix(sh + 4)) - 0.5) * 30.0;
+          st.minute = static_cast<float>(std::clamp(14.0 + 395.0 * k + jitter, 12.0, 412.0));
+          st.race = static_cast<int>(ri);
+          st.village = v;
+          st.eligible = 500 + static_cast<int32_t>(Unit(Mix(sh + 5)) * 1900);
+          st.cast = static_cast<int32_t>(st.eligible * (0.55 + 0.2 * Unit(Mix(sh + 6))));
+          const int32_t valid = static_cast<int32_t>(st.cast * 0.985);
+          std::vector<double> w(n);
+          double sum = 0;
+          for (size_t i = 0; i < n; ++i) {
+            w[i] = strength[i] * (0.7 + 0.6 * Unit(Mix(sh + 17 * (i + 7))));
+            if (static_cast<int>(i) == front_a) w[i] *= 1.0 - 0.3 * lean;
+            if (static_cast<int>(i) == front_b && front_b != front_a) w[i] *= 1.0 + 0.3 * lean;
+            sum += w[i];
+          }
+          st.votes_at = static_cast<uint32_t>(votes_.size());
+          for (size_t i = 0; i < n; ++i) {
+            votes_.push_back(static_cast<int32_t>(std::llround(valid * w[i] / sum)));
+          }
+          // Referendum ballot at the same station (all voters get one).
+          st.ref_eligible = st.eligible;
+          const int32_t ref_valid = static_cast<int32_t>(st.cast * 0.93 * 0.97);
+          const double agree = std::clamp(
+              0.38 + 0.26 * national_lean + 0.12 * (Unit(Mix(sh + 8)) - 0.5) + 0.04 * lean, 0.05,
+              0.95);
+          st.agree = static_cast<int32_t>(ref_valid * agree);
+          st.disagree = ref_valid - st.agree;
+          stations_.push_back(st);
+        }
+      }
+    }
+  }
+  std::stable_sort(stations_.begin(), stations_.end(),
+                   [](const Station& a, const Station& b) { return a.minute < b.minute; });
+  last_report_ = stations_.empty() ? 0 : stations_.back().minute;
+  PlanDeclarations();
+}
+
+// Walks the count in time order and decides when campaigns speak: the leader
+// declares victory once their margin comfortably exceeds the votes still out
+// (a looser rule than a media projection, so it can come early, and
+// occasionally prematurely); the runner-up concedes some minutes later if
+// the lead holds.
+void SimulatedResultsSource::PlanDeclarations() {
+  const auto& races = data_->races();
+  std::vector<std::vector<int64_t>> votes(races.size());
+  std::vector<int> counted(races.size(), 0), total_units(races.size(), 0);
+  std::vector<int64_t> total_votes(races.size(), 0);
+  std::vector<int> declared(races.size(), -1);
+  std::vector<float> declared_at(races.size(), 0);
+  std::vector<bool> conceded(races.size(), false);
+  for (size_t r = 0; r < races.size(); ++r) votes[r].assign(races[r].candidates.size(), 0);
+  for (const Station& st : stations_) total_units[st.race]++;
+
+  auto leaders = [&](int r, int* first, int* second) {
+    *first = *second = -1;
+    for (int i = 0; i < static_cast<int>(votes[r].size()); ++i) {
+      if (*first < 0 || votes[r][i] > votes[r][*first]) {
+        *second = *first;
+        *first = i;
+      } else if (*second < 0 || votes[r][i] > votes[r][*second]) {
+        *second = i;
+      }
+    }
+  };
+  for (const Station& st : stations_) {
+    const int r = st.race;
+    for (size_t i = 0; i < votes[r].size(); ++i) {
+      votes[r][i] += votes_[st.votes_at + i];
+      total_votes[r] += votes_[st.votes_at + i];
+    }
+    counted[r]++;
+    int a, b;
+    leaders(r, &a, &b);
+    if (b < 0) continue;
+    const int64_t margin = votes[r][a] - votes[r][b];
+    const double per_unit = static_cast<double>(total_votes[r]) / counted[r];
+    const double remaining = per_unit * (total_units[r] - counted[r]);
+    const double progress = static_cast<double>(counted[r]) / total_units[r];
+    const uint64_t h = HashString(races[r].id, seed_ ^ 0xDEC1);
+    // Campaigns speak once their own tallies look safe: a clear lead with
+    // around half of the stations in, well before media projections.
+    if (declared[r] < 0 && progress >= 0.4 &&
+        (margin > 0.3 * remaining || (progress >= 0.55 && margin > 0.04 * total_votes[r]))) {
+      declared[r] = a;
+      // Speech at campaign HQ 5-25 minutes later.
+      declared_at[r] = st.minute + 5 + 20 * static_cast<float>(Unit(Mix(h)));
+      declarations_.push_back({declared_at[r], r, a, Declaration::Type::kVictory});
+    }
+    if (declared[r] == a && !conceded[r] && st.minute > declared_at[r] &&
+        margin > 1.05 * remaining) {
+      conceded[r] = true;
+      declarations_.push_back({st.minute + 3 + 15 * static_cast<float>(Unit(Mix(h + 1))), r, b,
+                               Declaration::Type::kConcede});
+    }
+  }
+  std::sort(declarations_.begin(), declarations_.end(),
+            [](const PlannedDeclaration& x, const PlannedDeclaration& y) { return x.minute < y.minute; });
+}
+
+void SimulatedResultsSource::SeekClock(double minutes) {
+  clock_ = std::clamp(minutes, 0.0, kCountMinutes);
+  emitted_reported_ = SIZE_MAX;  // force a new snapshot
+  emitted_declared_ = SIZE_MAX;
+}
+
+void SimulatedResultsSource::set_speed(double s) {
+  s = std::clamp(s, kMinSpeed, kMaxSpeed);
+  speed_ = std::exp2(std::round(std::log2(s)));
+}
+
+std::string SimulatedResultsSource::ClockLabel(double minutes) {
+  const int m = static_cast<int>(std::floor(std::clamp(minutes, 0.0, 480.0)));
+  char buf[16];
+  std::snprintf(buf, sizeof buf, "%02d:%02d", 16 + m / 60, m % 60);
+  return buf;
 }
 
 std::shared_ptr<const ResultsSnapshot> SimulatedResultsSource::Poll(double now) {
-  if (last_now_ >= 0 && !paused_ && progress_ < 1.0) {
-    progress_ = std::min(1.0, progress_ + (now - last_now_) / duration_s_);
-    dirty_ = true;
+  if (last_now_ >= 0 && !paused_ && clock_ < kCountMinutes) {
+    clock_ = std::min(kCountMinutes, clock_ + (now - last_now_) * speed_ / 60.0);
   }
   last_now_ = now;
-  // Emit at most ~4 snapshots per second, like a real feed.
-  if (!dirty_ || now - last_emit_ < 0.25) return nullptr;
+  // Like a real feed: publish at most ~5 times per second, and only when new
+  // stations have reported.
+  if (now - last_emit_ < 0.2 && emitted_reported_ != SIZE_MAX) return nullptr;
+  const size_t reported = static_cast<size_t>(
+      std::upper_bound(stations_.begin(), stations_.end(), clock_,
+                       [](double t, const Station& s) { return t < s.minute; }) -
+      stations_.begin());
+  const size_t declared = static_cast<size_t>(
+      std::upper_bound(declarations_.begin(), declarations_.end(), clock_,
+                       [](double t, const PlannedDeclaration& d) { return t < d.minute; }) -
+      declarations_.begin());
+  if (reported == emitted_reported_ && declared == emitted_declared_) return nullptr;
+  emitted_declared_ = declared;
   last_emit_ = now;
-  dirty_ = false;
-  auto snap = SnapshotAt(progress_);
+  emitted_reported_ = reported;
+  auto snap = SnapshotAtClock(clock_);
   snap->version = ++version_;
   return snap;
 }
 
 std::string SimulatedResultsSource::Describe() const {
-  char buf[64];
-  std::snprintf(buf, sizeof buf, "SIMULATION %.0f%%%s", progress_ * 100, paused_ ? " (paused)" : "");
+  char buf[96];
+  std::snprintf(buf, sizeof buf, "SIMULATION %s ×%g%s", ClockLabel(clock_).c_str(), speed_,
+                paused_ ? " (paused)" : "");
   return buf;
 }
 
+std::vector<int64_t> SimulatedResultsSource::InflowHistory(double bucket_minutes,
+                                                           double until) const {
+  std::vector<int64_t> out;
+  const auto& races = data_->races();
+  for (const Station& st : stations_) {
+    if (st.minute > until) break;
+    const size_t b = static_cast<size_t>(st.minute / bucket_minutes);
+    if (out.size() <= b) out.resize(b + 1, 0);
+    for (size_t i = 0; i < races[st.race].candidates.size(); ++i) out[b] += votes_[st.votes_at + i];
+  }
+  return out;
+}
+
 std::shared_ptr<ResultsSnapshot> SimulatedResultsSource::SnapshotAt(double p) const {
+  return SnapshotAtClock(p * kCountMinutes);
+}
+
+std::shared_ptr<ResultsSnapshot> SimulatedResultsSource::SnapshotAtClock(double minutes) const {
+  minutes = std::clamp(minutes, 0.0, kCountMinutes);
   auto snap = std::make_shared<ResultsSnapshot>();
   snap->simulated = true;
   snap->source = "SIMULATION - synthetic numbers, not real results";
-  snap->status = p <= 0 ? ResultsStatus::kPreElection
-                 : p >= 1 ? ResultsStatus::kFinal
-                          : ResultsStatus::kCounting;
-  char buf[32];
-  const int minutes = static_cast<int>(p * 240);  // 16:00 -> ~20:00
-  std::snprintf(buf, sizeof buf, "2026-11-28T%02d:%02d:00+08:00", 16 + minutes / 60, minutes % 60);
-  snap->updated_at = buf;
+  snap->updated_at = "2026-11-28T" + ClockLabel(minutes) + ":00+08:00";
 
-  for (const Race& race : data_->races()) {
-    const int county = tree_->FindByCode(race.county_code);
-    if (county < 0) continue;
-    // Party-blind random candidate strengths, skewed so races have a spread.
-    std::vector<double> strength(race.candidates.size());
-    for (size_t i = 0; i < race.candidates.size(); ++i) {
-      const double u = Unit(HashString(race.candidates[i].id, seed_));
-      strength[i] = 0.05 + std::pow(u, 2.2);
-    }
-    auto& regions = snap->races[race.id];
-    for (int town : tree_->region(county).children) {
-      const auto& villages = tree_->region(town).children;
-      std::vector<int> units = villages.empty() ? std::vector<int>{town} : villages;
-      for (int v : units) {
-        const geo::Region& vr = tree_->region(v);
-        const uint64_t h = HashString(vr.code, seed_);
-        Tally t;
-        t.votes.assign(race.candidates.size(), 0);
-        t.eligible = 600 + static_cast<int64_t>(Unit(Mix(h)) * 5400);
-        t.units_total = 1;
-        t.has_data = true;
-        const double report_at = 0.02 + 0.96 * Unit(Mix(h + 1));
-        if (p >= report_at) {
-          t.units_counted = 1;
-          const double turnout = 0.52 + 0.22 * Unit(Mix(h + 2));
-          t.ballots_cast = static_cast<int64_t>(t.eligible * turnout);
-          const int64_t valid = static_cast<int64_t>(t.ballots_cast * 0.985);
-          std::vector<double> w(race.candidates.size());
-          double sum = 0;
-          for (size_t i = 0; i < w.size(); ++i) {
-            const double local = 0.6 + 0.8 * Unit(Mix(h + 17 * (i + 3)));
-            w[i] = strength[i] * local;
-            sum += w[i];
-          }
-          for (size_t i = 0; i < w.size(); ++i) {
-            t.votes[i] = static_cast<int64_t>(std::llround(valid * w[i] / sum));
-          }
-        }
-        regions[vr.code] = std::move(t);
-      }
+  const auto& races = data_->races();
+  // Every village appears (so progress denominators are right) even before
+  // any of its stations report.
+  std::vector<Tally*> village_tally(tree_->size(), nullptr);
+  std::vector<RefTally*> village_ref(tree_->size(), nullptr);
+  const std::string ref_id =
+      data_->info().referendums.empty() ? std::string() : data_->info().referendums[0].id;
+  for (const Station& st : stations_) {
+    if (village_tally[st.village]) continue;
+    const Race& race = races[st.race];
+    const std::string& code = tree_->region(st.village).code;
+    Tally& t = snap->races[race.id][code];
+    t.votes.assign(race.candidates.size(), 0);
+    t.units_total = village_units_[st.village];
+    t.has_data = true;
+    village_tally[st.village] = &t;
+    if (!ref_id.empty()) {
+      RefTally& r = snap->referendums[ref_id][code];
+      r.units_total = village_units_[st.village];
+      r.has_data = true;
+      village_ref[st.village] = &r;
     }
   }
-
-  for (const Referendum& ref : data_->info().referendums) {
-    auto& regions = snap->referendums[ref.id];
-    const double national_lean = Unit(HashString(ref.id, seed_));
-    for (int county : tree_->nation().children) {
-      for (int town : tree_->region(county).children) {
-        const geo::Region& tr = tree_->region(town);
-        const uint64_t h = HashString(tr.code + ref.id, seed_);
-        RefTally t;
-        t.units_total = 1;
-        t.has_data = true;
-        t.eligible = 8000 + static_cast<int64_t>(Unit(Mix(h)) * 120000);
-        if (p >= 0.03 + 0.95 * Unit(Mix(h + 5))) {
-          t.units_counted = 1;
-          t.ballots_cast = static_cast<int64_t>(t.eligible * (0.40 + 0.2 * Unit(Mix(h + 6))));
-          const double agree = 0.35 + 0.3 * national_lean + 0.1 * (Unit(Mix(h + 7)) - 0.5);
-          t.agree = static_cast<int64_t>(t.ballots_cast * 0.98 * agree);
-          t.disagree = static_cast<int64_t>(t.ballots_cast * 0.98) - t.agree;
-        }
-        regions[tr.code] = t;
-      }
+  size_t reported = 0;
+  for (const Station& st : stations_) {
+    if (st.minute > minutes) break;
+    ++reported;
+    Tally& t = *village_tally[st.village];
+    for (size_t i = 0; i < t.votes.size(); ++i) t.votes[i] += votes_[st.votes_at + i];
+    t.eligible += st.eligible;
+    t.ballots_cast += st.cast;
+    t.units_counted += 1;
+    if (RefTally* r = village_ref[st.village]) {
+      r->agree += st.agree;
+      r->disagree += st.disagree;
+      r->eligible += st.ref_eligible;
+      r->ballots_cast += st.cast;
+      r->units_counted += 1;
     }
   }
+  for (const PlannedDeclaration& d : declarations_) {
+    if (d.minute > minutes) break;
+    const Race& race = races[d.race];
+    snap->declarations.push_back({race.id, race.candidates[d.candidate].id, d.type,
+                                  "2026-11-28T" + ClockLabel(d.minute) + ":00+08:00"});
+  }
+  snap->status = reported == 0                ? ResultsStatus::kPreElection
+                 : reported == stations_.size() ? ResultsStatus::kFinal
+                                                : ResultsStatus::kCounting;
   return snap;
 }
 

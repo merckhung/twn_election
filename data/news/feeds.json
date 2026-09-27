@@ -1,0 +1,19 @@
+{
+  "_comment": "News sources for `twn_election --news` and `news_tool --fetch`. RSS 2.0 or Atom over http(s):// or file://. URLs could not be verified from the development sandbox (no outbound web access); disable any that fail. Drop *.jsonl files ({title,url,source,published,summary} per line) into inbox_dir to ingest other sources.",
+  "interval_seconds": 600,
+  "classify_per_cycle": 40,
+  "inbox_dir": "data/news/inbox",
+  "google_news_per_candidate": false,
+  "llm": {
+    "base_url": "https://api.openai.com/v1",
+    "model": "gpt-4o-mini",
+    "json_mode": true
+  },
+  "feeds": [
+    {"name": "Google 新聞：九合一 縣市長", "url": "https://news.google.com/rss/search?q=%E4%B9%9D%E5%90%88%E4%B8%80+%E7%B8%A3%E5%B8%82%E9%95%B7&hl=zh-TW&gl=TW&ceid=TW:zh-Hant"},
+    {"name": "Google 新聞：2026 地方選舉", "url": "https://news.google.com/rss/search?q=2026+%E5%9C%B0%E6%96%B9%E9%81%B8%E8%88%89+%E5%80%99%E9%81%B8%E4%BA%BA&hl=zh-TW&gl=TW&ceid=TW:zh-Hant"},
+    {"name": "中央社 政治", "url": "https://feeds.feedburner.com/rsscna/politics"},
+    {"name": "自由時報 政治", "url": "https://news.ltn.com.tw/rss/politics.xml"},
+    {"name": "Taipei Times", "url": "https://www.taipeitimes.com/xml/index.rss"}
+  ]
+}

@@ -16,8 +16,9 @@ void Usage() {
       "  --root=DIR          project directory containing data/ and assets/ (default: .)\n"
       "  --results=FILE      results JSON to watch (default: data/election/2026/results.json)\n"
       "  --simulate          run a synthetic, clearly-labelled counting-night DEMO\n"
-      "  --sim_duration=S    seconds for the simulated count to complete (default 180)\n"
-      "  --sim_progress=P    start the simulation at progress P in [0,1]\n"
+      "  --sim_speed=X       simulation speed: 1 (real time), 2, 4, ... 4096 (default 64)\n"
+      "  --sim_clock=HH:MM   start the simulated count at this time (16:00-23:00)\n"
+      "  --sim_progress=P    start at fraction P of the evening (16:00 + P*7h)\n"
       "  --seed=N            simulation seed\n"
       "  --focus=CODE        start zoomed into a region (county 63000, town 63000010, ...)\n"
       "  --mode=N            colouring: 0 leader, 1 counting progress, 2 turnout, 3 referendum\n"
@@ -25,11 +26,22 @@ void Usage() {
       "  --width=W --height=H\n"
       "  --headless          render offscreen (no window); use with --screenshot\n"
       "  --screenshot=FILE   headless: write a PNG and exit\n"
+      "  --record=DIR        headless: write a PNG frame sequence (see --record_seconds/--fps)\n"
+      "  --record_seconds=S --fps=F\n"
+      "  --db=FILE           SQLite database (default <root>/twn_election.db)\n"
+      "  --news              fetch + classify news (data/news/feeds.json)\n"
+      "  --news_config=FILE  alternative feeds config\n"
+      "  --llm_base_url=URL  OpenAI-compatible endpoint (default https://api.openai.com/v1)\n"
+      "  --llm_model=NAME    model name (default gpt-4o-mini); key from $OPENAI_API_KEY\n"
+      "  --no_llm            classify with the offline keyword heuristic only\n"
+      "  --mock_news         generate labelled mock news (default with --simulate --news)\n"
+      "  --mock_news_rate=N  mock items per (simulated) hour (default 12)\n"
       "  --hover=CODE        headless: show a region as hovered\n"
       "  --yaw=DEG --pitch=DEG  initial camera angles\n"
       "  --font_dir=DIR      directory scanned for CJK fonts (default /usr/share/fonts)\n"
       "  --validation        enable VK_LAYER_KHRONOS_validation\n"
-      "  --help_overlay      start with the controls overlay visible\n");
+      "  --help_overlay      start with the controls overlay visible\n"
+      "  --show_news         start with the news panel open (key N)\n");
 }
 
 bool Flag(const char* arg, const char* name, std::string* value) {
@@ -58,7 +70,26 @@ int main(int argc, char** argv) {
     if (Flag(a, "--root", &v)) o.root = v;
     else if (Flag(a, "--results", &v)) o.results_path = v;
     else if (Flag(a, "--simulate", &v)) o.simulate = v != "0" && v != "false";
-    else if (Flag(a, "--sim_duration", &v)) o.sim_duration_s = std::atof(v.c_str());
+    else if (Flag(a, "--sim_speed", &v)) o.sim_speed = std::atof(v.c_str());
+    else if (Flag(a, "--sim_clock", &v)) {
+      int h = 0, mi = 0;
+      if (std::sscanf(v.c_str(), "%d:%d", &h, &mi) != 2) {
+        std::fprintf(stderr, "--sim_clock expects HH:MM\n");
+        return 2;
+      }
+      o.sim_clock = (h - 16) * 60.0 + mi;
+    }
+    else if (Flag(a, "--record", &v)) o.record_dir = v;
+    else if (Flag(a, "--record_seconds", &v)) o.record_seconds = std::atof(v.c_str());
+    else if (Flag(a, "--fps", &v)) o.record_fps = std::atof(v.c_str());
+    else if (Flag(a, "--db", &v)) o.db_path = v;
+    else if (Flag(a, "--news_config", &v)) o.news_config = v;
+    else if (Flag(a, "--news", &v)) o.news = v != "0";
+    else if (Flag(a, "--llm_base_url", &v)) o.llm.base_url = v;
+    else if (Flag(a, "--llm_model", &v)) o.llm.model = v;
+    else if (Flag(a, "--no_llm", &v)) o.no_llm = v != "0";
+    else if (Flag(a, "--mock_news_rate", &v)) o.mock_news_per_hour = std::atof(v.c_str());
+    else if (Flag(a, "--mock_news", &v)) o.mock_news = v != "0";
     else if (Flag(a, "--sim_progress", &v)) o.sim_progress = std::atof(v.c_str());
     else if (Flag(a, "--seed", &v)) o.seed = std::strtoull(v.c_str(), nullptr, 10);
     else if (Flag(a, "--focus", &v)) o.focus = v;
@@ -79,6 +110,7 @@ int main(int argc, char** argv) {
     else if (Flag(a, "--font_dir", &v)) o.font_dir = v;
     else if (Flag(a, "--validation", &v)) o.validation = v != "0";
     else if (Flag(a, "--help_overlay", &v)) o.help = true;
+    else if (Flag(a, "--show_news", &v)) o.show_news = true;
     else if (std::strcmp(a, "--help") == 0 || std::strcmp(a, "-h") == 0) {
       Usage();
       return 0;

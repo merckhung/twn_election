@@ -8,3 +8,14 @@ cc_binary(
         "//src/geo",
     ],
 )
+
+cc_binary(
+    name = "news_tool",
+    srcs = ["news_tool.cc"],
+    deps = [
+        "//src/election",
+        "//src/news",
+        "//src/store",
+        "@nlohmann_json//:json",
+    ],
+)

@@ -1,0 +1,27 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "news",
+    srcs = [
+        "classifier.cc",
+        "feed_parser.cc",
+        "http.cc",
+        "mock_news.cc",
+        "service.cc",
+    ],
+    hdrs = [
+        "classifier.h",
+        "feed_parser.h",
+        "http.h",
+        "mock_news.h",
+        "service.h",
+    ],
+    deps = [
+        "//src/election",
+        "//src/store",
+        "@nlohmann_json//:json",
+        "@system_curl//:curl",
+    ],
+)

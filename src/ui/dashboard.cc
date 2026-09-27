@@ -13,6 +13,7 @@
 #include "include/core/SkRRect.h"
 #include "include/effects/SkDashPathEffect.h"
 #include "include/effects/SkGradient.h"
+#include "src/election/events.h"
 
 namespace twn::ui {
 
@@ -241,8 +242,11 @@ void Dashboard::Render(const DashboardModel& m, uint8_t* pixels) {
   const DashboardLayout layout = Layout(m.width, m.height);
   s_ = layout.scale;
 
+  UpdateLive(m);
   DrawInsets(c, m);
+  DrawRings(c, m);
   DrawLabels(c, m);
+  DrawCallouts(c, m);
   DrawHeader(c, m);
   DrawLeftColumn(c, m);
   const float margin = 16 * s_;
@@ -253,7 +257,11 @@ void Dashboard::Render(const DashboardModel& m, uint8_t* pixels) {
   } else {
     DrawRacePanel(c, m, panel);
   }
+  DrawTimeline(c, m);
   DrawFooter(c, m);
+  DrawToasts(c, m);
+  DrawFloaters(c);
+  DrawNotice(c, m);
   DrawTooltip(c, m);
   if (m.show_help) DrawHelp(c, m);
 }
@@ -272,6 +280,8 @@ void Dashboard::DrawHeader(SkCanvas* c, const DashboardModel& m) {
   uint32_t status_color;
   if (snap.simulated) {
     status = L_.T("status.simulation");
+    const std::string clock = election::TimeLabel(snap.updated_at);
+    if (!clock.empty() && snap.status != ResultsStatus::kPreElection) status += " · " + clock;
     status_color = 0xFFD64545;
   } else if (snap.status == ResultsStatus::kPreElection) {
     const Countdown cd = ComputeCountdown(info.date, m.now);
@@ -281,6 +291,8 @@ void Dashboard::DrawHeader(SkCanvas* c, const DashboardModel& m) {
     status_color = 0xFF3A6EA5;
   } else if (snap.status == ResultsStatus::kCounting) {
     status = L_.T("status.counting");
+    const std::string clock = election::TimeLabel(snap.updated_at);
+    if (!clock.empty()) status += " · " + clock;
     status_color = 0xFFE08E0B;
   } else {
     status = L_.T("status.final");
@@ -300,6 +312,7 @@ void Dashboard::DrawHeader(SkCanvas* c, const DashboardModel& m) {
     const bool last = i + 1 == path.size();
     const SkFont f = last ? fonts_->Bold(19 * s_) : fonts_->Regular(19 * s_);
     bx += DrawText(c, L_.RegionName(m.tree->region(path[i])), bx, y, f, last ? kAccent : kText2);
+    if (path[i] == m.pinned) bx += DrawText(c, " ★", bx, y, fonts_->Regular(15 * s_), kAccent);
     if (!last) bx += DrawText(c, "  ›  ", bx, y, fonts_->Regular(19 * s_), kText3);
   }
   const geo::Region& focus = m.tree->region(m.focus);
@@ -311,6 +324,13 @@ void Dashboard::DrawLeftColumn(SkCanvas* c, const DashboardModel& m) {
   const float x = 16 * s_;
   const float w = 330 * s_;
   float y = 150 * s_;
+  if (m.show_news) {
+    const float bottom = m.height - 140 * s_;
+    const float news_h = feed_.empty() ? bottom - y : (bottom - y) * 0.68f;
+    DrawNewsPanel(c, m, x, y, w, news_h);
+    DrawFeed(c, m, x, y + news_h + 10 * s_, w, bottom - y - news_h - 10 * s_);
+    return;
+  }
   const float pad = 14 * s_;
   const geo::Region& focus = m.tree->region(m.focus);
   const auto& info = m.data->info();
@@ -440,7 +460,10 @@ void Dashboard::DrawLeftColumn(SkCanvas* c, const DashboardModel& m) {
                                      : std::string(L_.T("ref.threshold")),
                        w - 2 * pad),
              x + pad, ty, fonts_->Regular(11.5f * s_), kText3);
+    y += h + 12 * s_;
   }
+  // Live event feed fills the rest of the column (above the timeline).
+  DrawFeed(c, m, x, y, w, m.height - 140 * s_ - y);
 }
 
 void Dashboard::DrawNationPanel(SkCanvas* c, const DashboardModel& m, SkRect panel) {
@@ -518,6 +541,12 @@ void Dashboard::DrawNationPanel(SkCanvas* c, const DashboardModel& m, SkRect pan
                                        6 * s_, 6 * s_),
                    Fill(SkColorSetARGB(40, 255, 255, 255)));
     }
+    // Flash the row when the race changes (new leader, declaration, ...).
+    if (auto it = flash_.find("row:" + race->id); it != flash_.end() && it->second > 0) {
+      c->drawRRect(SkRRect::MakeRectXY(SkRect::MakeXYWH(x - 6 * s_, y, w + 12 * s_, row_h),
+                                       6 * s_, 6 * s_),
+                   Fill(SkColorSetARGB(static_cast<U8CPU>(90 * it->second), 245, 197, 66)));
+    }
     const Party& inc = m.data->party(race->incumbent.party);
     c->drawRect(SkRect::MakeXYWH(x - 2 * s_, mid_y - avatar * 0.4f, 3 * s_, avatar * 0.8f),
                 Fill(lead >= 0 ? m.data->party(race->candidates[lead].party).color : inc.color));
@@ -564,10 +593,20 @@ void Dashboard::DrawNationPanel(SkCanvas* c, const DashboardModel& m, SkRect pan
                list_x + avatar + 6 * s_, mid_y + 5 * s_, fonts_->Bold(13.5f * s_), kText);
       const float bx = list_x + avatar + 80 * s_;
       const float bw = w - (bx - x) - 58 * s_;
-      Bar(c, SkRect::MakeXYWH(bx, mid_y - 4 * s_, bw, 8 * s_), static_cast<float>(t.Share(lead)),
+      const double share = Roll("share:" + race->id, t.Share(lead) * 10000) / 10000;
+      Bar(c, SkRect::MakeXYWH(bx, mid_y - 4 * s_, bw, 8 * s_), static_cast<float>(share),
           p.color);
-      DrawText(c, Percent(t.Share(lead)), x + w, mid_y + 5 * s_, fonts_->Bold(13 * s_), kText,
+      DrawText(c, Percent(share), x + w, mid_y + 5 * s_, fonts_->Bold(13 * s_), kText,
                Align::kRight);
+      if (const RaceStatus* st = StatusOf(m, *race)) {
+        if (st->called == lead) {
+          DrawStamp(c, list_x + avatar - 2 * s_, mid_y - avatar * 0.25f, avatar * 0.8f,
+                    st->called_age);
+        } else if (st->declared == lead) {
+          Chip(c, fonts_, L_.T("chip.declared"), bx + bw - ChipWidth(fonts_, L_.T("chip.declared"), 16 * s_),
+               mid_y - 19 * s_, 16 * s_, 0xFF9B59B6, s_);
+        }
+      }
       // Counting progress as a thin line under the row.
       Bar(c, SkRect::MakeXYWH(bx, mid_y + 7 * s_, bw, 2 * s_), static_cast<float>(t.Progress()),
           kAccent, SkColorSetARGB(25, 255, 255, 255));
@@ -607,6 +646,17 @@ void Dashboard::DrawRacePanel(SkCanvas* c, const DashboardModel& m, SkRect panel
 
   const Tally& t = m.results->RaceTally(*race, m.focus);
   const bool counting = HasVotes(t);
+  const RaceStatus* status = StatusOf(m, *race);
+  // Rolling (animated) vote counts for this view.
+  const std::string key_base = race->id + ":" + std::to_string(m.focus) + ":";
+  std::vector<double> shown(race->candidates.size(), 0);
+  std::vector<double> added(race->candidates.size(), 0);
+  double shown_total = 0;
+  for (size_t i = 0; i < shown.size(); ++i) {
+    const double target = i < t.votes.size() ? static_cast<double>(t.votes[i]) : 0;
+    shown[i] = Roll(key_base + std::to_string(i), target, &added[i]);
+    shown_total += shown[i];
+  }
   // Progress + turnout.
   Bar(c, SkRect::MakeXYWH(x, y, w, 6 * s_), static_cast<float>(t.Progress()), kAccent);
   y += 22 * s_;
@@ -638,14 +688,37 @@ void Dashboard::DrawRacePanel(SkCanvas* c, const DashboardModel& m, SkRect panel
   const float card_h = std::min(92 * s_, avail / std::max<size_t>(1, order.size()));
   const float photo = std::min(card_h - 16 * s_, 62 * s_);
   const bool final = m.results->snapshot().status == ResultsStatus::kFinal;
+  const float list_top = y;
+  // Cards slide to their new rank (drawn back-to-front so movers stay on top).
+  std::vector<std::pair<float, size_t>> draw_order;
   for (size_t rank = 0; rank < order.size(); ++rank) {
+    const float target_y = list_top + rank * card_h;
+    const float cy_anim = Approach(card_y_, key_base + "y" + std::to_string(order[rank]), target_y, 6.f);
+    draw_order.push_back({std::fabs(cy_anim - target_y), rank});
+  }
+  std::sort(draw_order.begin(), draw_order.end());
+  for (const auto& [moving, rank] : draw_order) {
     const int i = order[rank];
+    y = card_y_[key_base + "y" + std::to_string(i)];
     const Candidate& cand = race->candidates[i];
     const Party& p = m.data->party(cand.party);
     const SkRect card = SkRect::MakeXYWH(x - 6 * s_, y + 4 * s_, w + 12 * s_, card_h - 6 * s_);
     const bool leader = counting && rank == 0;
+    const bool conceded = status && status->conceded == i;
     c->drawRRect(SkRRect::MakeRectXY(card, 10 * s_, 10 * s_),
                  Fill(leader ? SkColorSetARGB(46, 245, 197, 66) : SkColorSetARGB(18, 255, 255, 255)));
+    // Gold glow when this candidate just took the lead / was projected.
+    const float flash = flash_.count(race->id + ":" + std::to_string(i))
+                            ? flash_[race->id + ":" + std::to_string(i)]
+                            : 0.f;
+    if (flash > 0) {
+      SkPaint glow = Fill(SkColorSetARGB(static_cast<U8CPU>(220 * flash), 245, 197, 66));
+      glow.setStyle(SkPaint::kStroke_Style);
+      glow.setStrokeWidth((1.5f + 3 * flash) * s_);
+      c->drawRRect(SkRRect::MakeRectXY(card.makeOutset(flash * 3 * s_, flash * 3 * s_), 12 * s_, 12 * s_),
+                   glow);
+    }
+    if (conceded) c->saveLayerAlphaf(nullptr, 0.55f);
     const float cy = card.fTop + (card.height() - photo) / 2;
     avatars_->Draw(c, cand, p, x + 2 * s_, cy, photo);
     // Ballot number badge.
@@ -660,7 +733,7 @@ void Dashboard::DrawRacePanel(SkCanvas* c, const DashboardModel& m, SkRect panel
     float nx = tx;
     const SkFont name_font = fonts_->Bold(std::min(m.lang == Lang::kEn ? 17 * s_ : 20 * s_,
                                                    card_h * 0.24f));
-    const int64_t votes = i < static_cast<int>(t.votes.size()) ? t.votes[i] : 0;
+    const int64_t votes = static_cast<int64_t>(std::llround(shown[i]));
     const std::string votes_text = counting ? FormatThousands(votes) : "0";
     // Name and badges must stay clear of the vote count on the right.
     const float limit = x + w - TextWidth(fonts_->Bold(19 * s_), votes_text) - 10 * s_;
@@ -676,6 +749,10 @@ void Dashboard::DrawRacePanel(SkCanvas* c, const DashboardModel& m, SkRect panel
       chip(L_.T(final ? "race.elected" : "race.leading"), final ? 0xFF2E9E5B : 0xFFE08E0B, false);
     }
     if (cand.incumbent) chip(L_.T("race.incumbent"), kAccent, true);
+    if (status && status->declared == i && status->called != i) {
+      chip(L_.T("chip.declared"), 0xFF9B59B6, false);
+    }
+    if (conceded) chip(L_.T("chip.conceded"), 0xFF7F8C8D, false);
     std::string sub = L_.CandidateAltName(cand);
     if (!cand.endorsed_by.empty()) {
       std::string backers;
@@ -684,18 +761,35 @@ void Dashboard::DrawRacePanel(SkCanvas* c, const DashboardModel& m, SkRect panel
       }
       sub = Fmt(L_.T("race.backed"), {backers}) + " · " + sub;
     }
-    DrawText(c, Ellipsize(fonts_->Regular(12 * s_), sub, w - photo - 120 * s_), tx,
-             name_y + 17 * s_, fonts_->Regular(12 * s_), kText3);
+    const float sub_w = DrawText(c, Ellipsize(fonts_->Regular(12 * s_), sub, w - photo - 200 * s_),
+                                 tx, name_y + 17 * s_, fonts_->Regular(12 * s_), kText3);
+    DrawNewsCounts(c, m, cand.id, tx + sub_w + 8 * s_, name_y + 17 * s_);
 
     const float bar_y = card.fBottom - 16 * s_;
-    const float share = static_cast<float>(t.Share(i));
+    const float share = shown_total > 0 ? static_cast<float>(shown[i] / shown_total) : 0.f;
     Bar(c, SkRect::MakeXYWH(tx, bar_y, w - photo - 16 * s_, 7 * s_), share, p.color);
     // Votes, right aligned.
     DrawText(c, votes_text, x + w, name_y, fonts_->Bold(19 * s_), kText, Align::kRight);
     DrawText(c, counting ? Percent(share) : "—", x + w, name_y + 18 * s_, fonts_->Regular(13 * s_),
              kText2, Align::kRight);
-    y += card_h;
+    // "+N" floaters: batches arriving in quick succession are merged.
+    const std::string fkey = key_base + "f" + std::to_string(i);
+    float_pending_[fkey] += added[i];
+    float& cooldown = float_cooldown_[fkey];
+    cooldown -= dt_;
+    if (float_pending_[fkey] > 0 && cooldown <= 0) {
+      floaters_.push_back({"+" + FormatThousands(static_cast<int64_t>(float_pending_[fkey])), p.color,
+                           x + w - TextWidth(fonts_->Bold(19 * s_), votes_text) - 8 * s_, name_y});
+      float_pending_[fkey] = 0;
+      cooldown = 0.9f;
+    }
+    if (conceded) c->restore();
+    if (status && status->called == i) {
+      DrawStamp(c, x + w - 150 * s_, card.centerY(), std::min(58 * s_, card.height() * 0.8f),
+                status->called_age);
+    }
   }
+  y = list_top + order.size() * card_h;
   // Footnote.
   y = panel.fBottom - pad - 4 * s_;
   const std::string note =

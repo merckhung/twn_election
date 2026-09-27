@@ -1,7 +1,7 @@
 twn_election
 Copyright 2026 twn_election authors
 
-Code is licensed under the Apache License, Version 2.0 (see LICENSE).
+Code is licensed under the MIT License (see LICENSE).
 
 Third-party data (not covered by the licence above):
 - data/map/*: taiwan-atlas by Daniel Kao, MIT licence (data/map/LICENSE.taiwan-atlas),

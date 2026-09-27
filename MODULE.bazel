@@ -18,6 +18,7 @@ bazel_dep(name = "nlohmann_json", version = "3.12.0.bcr.2")
 bazel_dep(name = "earcut", version = "2.2.4")
 bazel_dep(name = "stb", version = "0.0.0-20251026-f1c79c0")
 bazel_dep(name = "freetype", version = "2.14.1.bcr.1")
+bazel_dep(name = "sqlite3", version = "3.53.4")
 
 bazel_dep(name = "googletest", version = "1.17.0.bcr.2", dev_dependency = True)
 
@@ -41,6 +42,7 @@ git_repository(
 shader_tools = use_extension("//bazel:shader_tools.bzl", "shader_tools")
 use_repo(shader_tools, "shader_compiler")
 
-# Windowing: host GLFW 3 (see bazel/system_libs.bzl).
+# Host libraries: GLFW 3 (windowing) and libcurl (news feeds, LLM API).
+# See bazel/system_libs.bzl.
 system_libs = use_extension("//bazel:system_libs.bzl", "system_libs")
-use_repo(system_libs, "system_glfw")
+use_repo(system_libs, "system_curl", "system_glfw")

@@ -13,6 +13,17 @@ C++20 and built with **Bazel (bzlmod only)**. 3D rendering uses **Vulkan**, and 
 | ![Counting simulation](docs/screenshots/03_nation_simulation.png) | ![Tainan](docs/screenshots/04_tainan_simulation.png) |
 | ![Village level, Japanese UI](docs/screenshots/05_village_ja.png) | ![Miaoli, English UI](docs/screenshots/06_miaoli_en.png) |
 
+### Election night (simulation)
+
+| | |
+|---|---|
+| ![Night, nation view](docs/screenshots/09_night_nation.png) | ![Projections and concessions](docs/screenshots/10_night_projections.png) |
+| ![Close race with news panel](docs/screenshots/11_close_race_news.png) | ![Japanese UI](docs/screenshots/12_night_ja.png) |
+
+Demo video (56 s, headless render): [docs/demo/election_night_demo.mp4](docs/demo/election_night_demo.mp4).
+It shows the whole 16:00–23:00 night at ×1024, then a close race at ×128 with mock news
+classified through the mock LLM server, then the Japanese UI.
+
 > The coloured "counting" screenshots use the built-in **simulation**
 > (`--simulate`). Its numbers are synthetic, random and party-blind. They are
 > **not** results or forecasts, and the UI marks them "模擬資料 SIMULATION" at all times.
@@ -44,6 +55,23 @@ C++20 and built with **Bazel (bzlmod only)**. 3D rendering uses **Vulkan**, and 
 - **Live data.** The app watches a results JSON file and hot-reloads it whenever it
   changes (see [Results feed](#results-feed)). Feeds may report at any granularity:
   missing levels are aggregated up the village → township → county hierarchy.
+- **Election night.** Polls close at 16:00, then about 16,000 simulated polling stations
+  report in random batches until about 23:00. Races have real lead changes, victory
+  declarations, concessions, projected winners and final counts. Speed runs from ×1
+  (real time) to ×4096. See [Election night](#election-night).
+- **Animations for every kind of update.**
+  - Numbers roll up, "+N" floaters appear, and regions pulse with beams of light.
+  - Cards slide into their new order, map colours cross-fade, and ripples spread from lead changes.
+  - Breaking-news banners and map callouts show who leads whom and by how much.
+  - A red 當選 stamp slams onto projected winners.
+  - A timeline shows vote inflow and event markers.
+- **News sentiment.**
+  - The app ingests RSS/Atom feeds and JSONL drops.
+  - Each article is classified with any **OpenAI-compatible LLM**, or with an offline
+    heuristic when no LLM is configured.
+  - The app counts good and bad news per candidate and stores everything in **SQLite**.
+  - Labelled mock news and a mock LLM server let you test the whole pipeline.
+- **Pinned home region.** Press `P` and the app starts at that region next time.
 - **Headless mode.** Renders offscreen, with no display or GPU needed (Mesa lavapipe
   works), and writes PNG screenshots for CI.
 
@@ -79,7 +107,7 @@ Prerequisites (Ubuntu/Debian):
 
 ```sh
 sudo apt install build-essential libvulkan1 mesa-vulkan-drivers libglfw3-dev \
-                 glslang-tools fonts-noto-cjk git
+                 libcurl4-openssl-dev glslang-tools fonts-noto-cjk git
 # Bazel: install bazelisk; .bazelversion pins Bazel 8.3.1
 ```
 
@@ -90,7 +118,9 @@ font directory (`--font_dir`), but only Linux has been tested.
 bazel run //:twn_election                          # window, Traditional Chinese
 bazel run //:twn_election -- --lang=ja             # 日本語
 bazel run //:twn_election -- --lang=en             # English
-bazel run //:twn_election -- --simulate            # demo counting night (synthetic!)
+bazel run //:twn_election -- --simulate            # counting night 16:00-23:00 (synthetic!)
+bazel run //:twn_election -- --simulate --sim_speed=256 --sim_clock=18:30
+bazel run //:twn_election -- --simulate --news     # + mock news, LLM/heuristic sentiment
 bazel run //:twn_election -- --focus=63000         # start in Taipei City
 bazel run //:twn_election -- --results=/path/live.json   # watch a live feed file
 
@@ -117,8 +147,114 @@ which takes a few minutes. Later builds are incremental.
 | Arrows/WASD, Q/E, R/F | Pan, rotate, tilt |
 | `1` `2` `3` `4` | Colour by leading party / counting progress / turnout / referendum |
 | `L` | Cycle language 繁體中文 → 日本語 → English |
-| `Space`, `[` `]` | Pause the simulation, rewind/skip 10% |
-| `Home` | Reset the view · `H` help overlay |
+| `Space` | Pause / resume the simulation |
+| `,` `.` | Simulation speed ×½ / ×2 (×1 real time … ×4096) |
+| `[` `]` | Rewind / skip 30 simulated minutes |
+| `N` | News sentiment panel |
+| `P` | Pin the current region as the start ("home") region; `P` again unpins |
+| `Home` | Go to the pinned region (or Taiwan) · `H` help overlay |
+
+## Election night
+
+`--simulate` plays a complete counting night:
+- Polls close at **16:00**. The first stations report around 16:15.
+- The bulk of stations report between 17:00 and 20:00, and the last by about **23:00**.
+- About 16,000 synthetic stations report village by village with random batches of votes.
+- In some races the early-reporting stations lean towards a different candidate than
+  the late ones, so leads genuinely change hands.
+- Candidate strengths are random and party-blind. **These are not forecasts.**
+
+The simulated clock runs at ×1 (real time: 7 hours) up to ×4096. The default is ×64,
+about 6½ minutes for the whole evening.
+
+`bazel run //tools:results_tool -- --night` prints the complete event timeline.
+
+### Events and what counts as breaking news
+
+| Event | 繁中 | Breaking? | Rule |
+|---|---|---|---|
+| Lead change | 逆轉 | ✅ | A new race leader, ahead by at least 0.1% of votes (min. 30) to avoid flip-flopping |
+| Victory declared | 宣布勝選 | ✅ | A campaign claims victory. This usually comes before the count is complete and always before the CEC's official announcement. Feeds send it as `declarations[]`; the simulator declares once the lead exceeds 30% of the votes still out (≥40% counted) |
+| Concession | 承認敗選 | ✅ | The runner-up concedes, some minutes after the winner declares |
+| Projected winner | 當選確定 | ✅ | The margin exceeds every vote still to count, estimated from votes per counted unit +15% (≥25% counted) |
+| Incumbent trailing | 現任落後 | ✅ | A sitting mayor or magistrate is behind with ≥30% counted |
+| First returns | 開出首票 | — | First votes in a race |
+| Too close | 差距膠著 | — | Margin under 1% with ≥70% counted |
+| Count complete | 開票完畢 | — | Every unit counted (the CEC certifies winners days later) |
+
+### Animations
+
+| Data | Animation |
+|---|---|
+| New votes (every batch) | Counters roll to the new totals; "+N" floaters rise from the cards; the region's prism bumps and glows, and a beam of light shoots up; the inflow histogram grows |
+| Local lead flip (township/village) | Ripples in the new leader's colour; the map colour cross-fades; a callout "A 反超 B" |
+| Steady inflow | Every ~2.5 s, a callout on the busiest region: "A 領先 B 3,214 票 · 開票 42%" |
+| Lead change (race) | Red **BREAKING** banner with both portraits; callout; cards slide into the new order with a gold glow; triple ripple; the race-list row flashes |
+| Victory declared / concession | Banner and callout; purple "宣布勝選" chip on the card; the conceding candidate's card dims with a "承認敗選" chip |
+| Projected winner | Banner; a red **當選** seal slams onto the card; gold ripples and a persistent beacon over the county |
+| New classified article | Callout with ▲ (good) / ▼ (bad) in green or red; the card's news counts flash; a soft ripple on the county |
+| Timeline | 16:00–23:00 track with a playhead, speed indicator, a votes-per-5-minutes histogram, and coloured markers for every event |
+
+## News sentiment (LLM)
+
+`--news` starts a background worker:
+1. It pulls the feeds in `data/news/feeds.json` (RSS/Atom, http(s) or `file://`) and any
+   `*.jsonl` files in `data/news/inbox/`.
+2. It stores new articles in SQLite.
+3. It classifies each article: which candidates it is about, and whether it is **good, bad
+   or neutral** for each of them, plus a one-line summary.
+
+The dashboard counts good and bad news per candidate: ▲/▼ on the cards, and a full
+panel on `N` with totals, a diverging bar per candidate and the latest headlines.
+
+Classification uses any **OpenAI-compatible Chat Completions** endpoint:
+`POST {base_url}/chat/completions` with a JSON-only answer. That includes OpenAI,
+Azure OpenAI, OpenRouter, Ollama, vLLM, LM Studio and llama.cpp server.
+
+```sh
+export OPENAI_API_KEY=sk-...                       # or TWN_LLM_API_KEY
+bazel run //:twn_election -- --news --llm_model=gpt-4o-mini
+bazel run //:twn_election -- --news --llm_base_url=http://localhost:11434/v1 --llm_model=qwen2.5
+bazel run //:twn_election -- --news --no_llm       # offline keyword heuristic only
+```
+
+Without an API key or local endpoint, and whenever a call fails, the worker falls back
+to the keyword heuristic (`model = "heuristic"`). Election-night events also become news
+items, with fixed rules: a lead change is good for the new leader and bad for the
+overtaken, and so on (`model = "event-rule"`).
+
+**Mock news.** For testing the LLM, the UI and the animations,
+`--simulate --news` (or `--mock_news`) generates synthetic campaign news.
+- Every item is labelled **【模擬】** (source `MOCK`, `mock://` URLs) and states that it is not a real report.
+- The templates are deliberately mild: rallies, endorsements, poll moves, criticism by
+  rivals. They contain no invented crimes or scandals about real people.
+- Each item carries its intended sentiment, so `news_tool --eval=N` can measure a
+  classifier's accuracy.
+- `tools/mock_openai_server.py` is a small OpenAI-compatible server for exercising the
+  full LLM path without an API key.
+
+```sh
+python3 tools/mock_openai_server.py --port 8089 &
+bazel run //:twn_election -- --simulate --news --llm_base_url=http://127.0.0.1:8089/v1 --llm_model=mock
+bazel run //tools:news_tool -- --eval=200 --llm_model=gpt-4o-mini   # accuracy on mock items
+bazel run //tools:news_tool -- --stats                             # good/bad counts per candidate
+bazel run //tools:news_tool -- --fetch | --ingest=f.jsonl | --latest=10 | --mock=50 --rss=mock.xml
+```
+
+## Database (SQLite)
+
+`twn_election.db` sits in the project root (change it with `--db`) and uses WAL mode, so
+the news worker writes while the UI reads.
+
+| Table | Contents |
+|---|---|
+| `settings` | Key/value, e.g. `home_region` (the pinned start region) |
+| `race_totals` | Per race and candidate: votes and units counted, one row set per results timestamp |
+| `events` | Every election-night event (type, race, leader, other, margin, progress) |
+| `articles` | News articles (URL-unique), their digest and the model that classified them |
+| `assessments` | Per article and candidate: sentiment (-1/0/+1) and reason |
+
+Simulated rows are flagged and cleared when a new simulation starts.
 
 ## Results feed
 
@@ -139,7 +275,9 @@ then rename it over the original. Format (`twn_election.results/v1`):
       "63000010001": { "votes": {"63000-02": 321, "63000-05": 456}, "units_counted": 1, "units_total": 1 }
     } }
   },
-  "referendums": { "ref-22": { "regions": { "TW": { "agree": 0, "disagree": 0, "eligible": 0 } } } }
+  "referendums": { "ref-22": { "regions": { "TW": { "agree": 0, "disagree": 0, "eligible": 0 } } } },
+  "declarations": [ { "race": "63000-mayor", "candidate": "63000-05", "type": "victory",
+                      "time": "2026-11-28T19:40:00+08:00" } ]
 }
 ```
 
@@ -156,21 +294,29 @@ bazel run //tools:results_tool -- --check=feed.json            # validate + prin
 
 ```
 MODULE.bazel            bzlmod deps: rules_cc, vulkan_headers, glm, nlohmann_json, earcut, stb,
-                        freetype, googletest (BCR); Skia via git_repository + our BUILD overlay;
-                        module extensions for host GLFW and the GLSL compiler
+                        freetype, sqlite3, googletest (BCR); Skia via git_repository + our BUILD overlay;
+                        module extensions for host GLFW, libcurl and the GLSL compiler
 bazel/                  shader_tools.bzl (finds glslangValidator/glslc), shaders.bzl
                         (GLSL -> SPIR-V -> embedded C++), system_libs.bzl (host GLFW)
 third_party/skia/       skia.BUILD overlay + skia_srcs.bzl (generated by tools/gen_skia_srcs.py
                         from Skia's gn/*.gni lists): CPU raster, SkSL, FreeType, directory font mgr
 src/geo/                TopoJSON decoder, projection (km, with insets), region hierarchy,
                         picking, label points, earcut-based extruded mesh builder
-src/election/           data model, results parsing/aggregation, file watcher, simulator
+src/election/           data model, results parsing/aggregation, file watcher, election-night
+                        simulator (stations, declarations), event tracker (breaking news)
+src/news/               RSS/Atom + JSONL ingestion, libcurl HTTP, OpenAI-compatible LLM and
+                        heuristic classifiers, mock news generator, background worker
+src/store/              SQLite store (settings, results history, events, news, assessments)
 src/render/             dlopen Vulkan loader, device/swapchain/offscreen context, renderer
                         (ground, map prisms + outlines, instanced bars, overlay), GLSL shaders
-src/ui/                 Skia dashboard, i18n (zh-TW/ja/en), fonts, candidate avatars
-src/app/                orbit camera, application (navigation, animation, input), main
-tests/                  googletest: geo, election, camera, i18n, Skia raster
-tools/                  results_tool, fetch_photos.py, gen_skia_srcs.py, screenshots.sh
+src/ui/                 Skia dashboard + live layer (banners, call-outs, feed, timeline,
+                        rolling numbers, stamps), i18n (zh-TW/ja/en), fonts, avatars
+src/app/                orbit camera, application (navigation, animation, input, map effects,
+                        pinned home), election-night glue (live.cc), main
+tests/                  googletest: geo, election, night (simulation/events), news/store,
+                        camera, i18n, Skia raster
+tools/                  results_tool, news_tool, mock_openai_server.py, fetch_photos.py,
+                        gen_skia_srcs.py, screenshots.sh
 ```
 
 - **Rendering.** Map meshes are built once per level and carry a per-vertex region
@@ -189,7 +335,7 @@ tools/                  results_tool, fetch_photos.py, gen_skia_srcs.py, screens
 
 ## Licence
 
-Code: Apache License 2.0 (see `LICENSE` and `NOTICE`). Map data: taiwan-atlas (MIT), derived from the MOI's
+Code: MIT (see `LICENSE` and `NOTICE`). Map data: taiwan-atlas (MIT), derived from the MOI's
 open government data. Candidate portraits are official government portraits or
 Wikimedia Commons images; their provenance is in `assets/photos/CREDITS.json`.
 Election data is compiled from public CEC announcements and press reports.
